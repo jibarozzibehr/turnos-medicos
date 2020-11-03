@@ -2,7 +2,6 @@ import helper
 from flask import Flask, request, Response, json, render_template
 from flask_cors import CORS
 import json
-import markdown
 
 app = Flask(__name__)
 cors = CORS(app, resources={r"*": {"origins": "*"}})
@@ -102,3 +101,6 @@ def delete_item():
     response = Response(json.dumps(res_data), mimetype='application/json')
 
     return response
+
+if __name__ == '__main__':    
+    app.run(debug=True, use_reloader=True)
