@@ -1,35 +1,39 @@
+
 <script>
-	export let name;
+	import Client from "./Client.svelte"
+	//import {onMount} from "svelte"
+	//export let name;
+	var PressedButton=false;
+
+	
+	function myFunction(){
+		/*
+		 PressedButton=!PressedButton;
+		 if(PressedButton){
+			document.body.style.backgroundColor = "black";
+		 }else{
+			document.body.style.backgroundColor = "red";
+		 }*/
+
+		 //document.body = "<Client/>"
+		 //document.getElementById("p1").innerHTML = "<Client/>";
+		 PressedButton=!PressedButton
+		// location.reload();
+		
+		//window.location.href = "./Client.svelte";
+	}
 </script>
-
 <main>
-	<nav class="navbar navbar-expand-lg navbar-light bg-light">
-  		<a class="navbar-brand" href="#">Navbar w/ text</a>
-  		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
-    		<span class="navbar-toggler-icon"></span>
-  		</button>
-  		<div class="collapse navbar-collapse" id="navbarText">
-    		<ul class="navbar-nav mr-auto">
-      			<li class="nav-item active">
-        			<a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
-      			</li>
-      			<li class="nav-item">
-        			<a class="nav-link" href="#">Features</a>
-      			</li>
-      			<li class="nav-item">
-        			<a class="nav-link" href="#">Pricing</a>
-      			</li>
-    		</ul>
-			<span class="navbar-text">
-			Navbar text with an inline element
-			</span>
-  		</div>
-	</nav>
+	<button type="button" class="btn btn-success" on:click={myFunction}>Success</button>
+	<Client/>
+	{#if  PressedButton === true}
+		<Client/>
+		{:else}
+		<h1>Hola222222</h1>
+	{/if}​​
 
-	<h1>Hello {name}!</h1>
-	<p>Visit the <a href="https://svelte.dev/tutorial">Svelte tutorial</a> to learn how to build Svelte apps.</p>
 
-	<button type="button" class="btn btn-success">Success</button>
+
 </main>
 
 
@@ -41,13 +45,6 @@
 		/*margin: 0 auto;*/
 		margin: 0 !important;
 		padding: 0 !important;
-	}
-
-	h1 {
-		color: #ff3e00;
-		text-transform: uppercase;
-		font-size: 4em;
-		font-weight: 100;
 	}
 
 	@media (min-width: 640px) {

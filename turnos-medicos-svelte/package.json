@@ -16,6 +16,8 @@
     "svelte": "^3.0.0"
   },
   "dependencies": {
+    "jquery": "^3.5.1",
+    "moment": "^2.29.1",
     "sirv-cli": "^1.0.0"
   }
 }
