@@ -1,38 +1,36 @@
-
 <script>
-	import Client from "./Client.svelte"
-	//import {onMount} from "svelte"
-	//export let name;
-	var PressedButton=false;
+	import Home from "./Home/Home.svelte";
+	import Client from "./Client/Client.svelte";
 
-	
-	function myFunction(){
-		/*
-		 PressedButton=!PressedButton;
-		 if(PressedButton){
-			document.body.style.backgroundColor = "black";
-		 }else{
-			document.body.style.backgroundColor = "red";
-		 }*/
+	export let page;
 
-		 //document.body = "<Client/>"
-		 //document.getElementById("p1").innerHTML = "<Client/>";
-		 PressedButton=!PressedButton
-		// location.reload();
-		
-		//window.location.href = "./Client.svelte";
+
+	function funcioncita() {
+		if (page == "Home") {
+			page = "Mis turnos";
+		}
+		else {
+			page = "Home";
+		}
 	}
+
 </script>
+
+
+
+
+
 <main>
-	<button type="button" class="btn btn-success" on:click={myFunction}>Success</button>
-	<Client/>
-	{#if  PressedButton === true}
-		<Client/>
-		{:else}
-		<h1>Hola222222</h1>
-	{/if}​​
+	<Client />
 
+	{#if page === "Home"}
+	<Home />
+	{:else if page === "Mis turnos"}
+	<Client />
+	​​
+	{/if}
 
+	<button type="button" on:click={funcioncita}>Change</button>
 
 </main>
 
