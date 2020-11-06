@@ -1,0 +1,23 @@
+<script>
+	import {user} from "./stores/store";
+	import {navigate} from "svelete-routing";
+
+	import {onMount} from "svelte"; //Permite la sincronizacion entre el script y el html
+	//el Mount permite definir una funcion donde devuelva otra cuando el html se termine de cargar
+
+	function logout(){
+		user.logoutUser();
+		navigate("/");
+		localStorage.clear();
+	}
+
+	onMount(() => {
+		if(!$user) {
+		navigate("/");
+	}
+});
+</script>
+
+<h1> Logout </h1>
+
+<button> on:click={logout}>Logout</button>
