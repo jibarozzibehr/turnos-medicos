@@ -1,20 +1,48 @@
 <script>
     import moment  from 'moment';
     import 'moment/locale/es';
+    import { onMount } from 'svelte';
+  
+    onMount (
+        async () => {
+            loadCalendar();
+        }
+    )
 
-    document.addEventListener('DOMContentLoaded', function() {
+    function loadCalendar() {
         var calendarEl = document.getElementById('calendar');
         var calendar = new FullCalendar.Calendar(calendarEl, {
             initialView: 'dayGridMonth',
-            /*dateClick: function(info) {
-                window.$("#exampleModal").modal();
+            dateClick: function(info) {
+                //window.$("#exampleModal").modal();
                 console.log(info);
 
-                calendar.addEvent({
+                /*var calendarDia = new FullCalendar.Calendar(calendarEl, {
+                    initialView: 'timeGridWeek',
+
+                    slotEventOverlap: true,
+
+                    events: [
+                        {
+
+                        }
+
+
+
+
+
+                    ]
+
+                });
+                
+                window.$("#exampleModal").modal();*/
+
+
+                /*calendar.addEvent({
                     title: "Evento 1",
                     date: info.dateStr
-                });
-            },*/
+                });*/
+            },
 
             eventClick: function(info) {
                 console.log(info.event.title);
@@ -63,7 +91,13 @@
         calendar.setOption('locale', 'Es');
 
         calendar.render();
-    });
+    }
+
+
+
+    /*document.addEventListener('DOMContentLoaded', function() {
+        
+    });*/
 
     function funcioncita() {
         alert("Todo");
@@ -95,7 +129,7 @@
         </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-danger" on:click={funcioncita}>Cancelar</button>
+        <button type="button" class="btn btn-danger" on:click={funcioncita}>Cancelar turno</button>
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
         
       </div>
