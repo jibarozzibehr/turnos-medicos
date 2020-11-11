@@ -6,23 +6,35 @@ import json
 app = Flask(__name__)
 cors = CORS(app, resources={r"*": {"origins": "*"}})
 
-@app.route('/')
-def hello_world():
-    #return 'Hello World!'
-    return render_template('index.html')
 
-@app.route('/item/new', methods=['POST'])
-def add_item():
-    # Get item from the POST body
+#Agrega un nuevo turno a la db
+@app.route('/events/new', methods=['POST'])
+def add_event():
     req_data = request.get_json()
-    item = req_data['item']
+
+    clinicID = req_data['clinicID']
+    professionalID = req_data['professionalID']
+    codClient = req_data['codClient']
+    practiceID = req_data['practiceID']
+    reservationDate = req_data['reservationDate']
+    day = req_data['day']
+    notified = req_data['notified']
+    cancelled = req_data['cancelled']
+    finalized = req_data['finalized']
+    
+    
+    title = req_data['title']
+    start = req_data['start']
+    description = req_data['description']
+    data = [clinicID,professionalID,codClient,practiceID,reservationDate,day,notified,cancelled,finalized,title,start,description]
+    
 
     # Add item to the list
-    res_data = helper.add_to_list(item)
+    res_data = helper.add_event(data)
 
     # Return error if item not added
     if res_data is None:
-        response = Response("{'error': 'Item not added - " + item + "'}", status=400 , mimetype='application/json')
+        response = Response("{'error': 'Event not added - " + title + "'}", status=500 , mimetype='application/json')
         return response
 
     # Return response
@@ -30,26 +42,55 @@ def add_item():
 
     return response
 
-@app.route('/items/all')
-def get_all_items():
-    # Get items from the helper
-    res_data = helper.get_all_items()
+
+#Modifica un turno de la db
+@app.route('/events/update', methods=['PUT'])
+def update_event():
+    req_data = request.get_json()
+    clinicID = req_data['clinicID']
+    professionalID = req_data['professionalID']
+    codClient = req_data['codClient']
+    practiceID = req_data['practiceID']
+    reservationDate = req_data['reservationDate']
+    day = req_data['day']
+    notified = req_data['notified']
+    cancelled = req_data['cancelled']
+    finalized = req_data['finalized']
+    
+    
+    title = req_data['title']
+    start = req_data['start']
+    description = req_data['description']
+    data = [clinicID,professionalID,codClient,practiceID,reservationDate,day,notified,cancelled,finalized,title,start,description]
+    
+
+    # Add item to the list
+    res_data = helper.update_event(data)
+
+    # Return error if item not added
+    if res_data is None:
+        response = Response("{'error': 'Event not modified - " + title + "'}", status=500 , mimetype='application/json')
+        return response
 
     # Return response
     response = Response(json.dumps(res_data), mimetype='application/json')
+
     return response
 
-@app.route('/item/status', methods=['GET'])
-def get_item():
-    # Get parameter from the URL
-    itemid = request.args.get('itemid')
+
+
+
+#Obtiene todos los turnos de un cliente
+@app.route('/events/getClientEvents', methods=['GET'])
+def get_client_events():
+    clientID = request.args.get('clientID')
 
     # Get items from the helper
-    status = helper.get_item(itemid)
+    status = helper.get_client_events(clientID)
 
     # Return 404 if item not found
     if status is None:
-        respuesta = {"error":"No se encontró el item " + str(itemid) + "."}
+        respuesta = {"error":"Client not found (clientID=" + str(clientID) + ")."}
         response = Response(json.dumps(respuesta), status=404 , mimetype='application/json')
         return response
 
@@ -61,46 +102,122 @@ def get_item():
     response = Response(json.dumps(status), status=200, mimetype='application/json')
     return response
 
-@app.route('/item/update', methods=['PUT'])
-def update_status():
-    # Get item from the POST body
-    req_data = request.get_json()
-    itemid = req_data['itemid']
-    status = req_data['status']
 
-    # Update item in the list
-    res_data = helper.update_status(itemid, status)
 
-    # Return error if the status could not be updated
-    if res_data is None:
-        respuesta = {"error" : "Se produjo un error al actualizar el status."}
-        response = Response(json.dumps(respuesta), status=400 , mimetype='application/json')
+#Obtiene todos los turnos de un profesional
+@app.route('/events/getProfessionalEvents', methods=['GET'])
+def get_professional_events():
+    clinicID = request.args.get('clinicID')
+    professionalID = request.args.get('professionalID')
+
+
+    # Get items from the helper
+    status = helper.get_professional_events(clinicID,professionalID)
+
+    # Return 404 if item not found
+    if status is None:
+        respuesta = {"error":"Professional not found (clinicID = " + str(clinicID) + " professionalID = " + str(professionalID) + ")."}
+        response = Response(json.dumps(respuesta), status=404 , mimetype='application/json')
         return response
 
-    # Return response
-    response = Response(json.dumps(res_data), mimetype='application/json')
+    # Return status
+    """res_data = {
+        'status': status
+    }"""
 
+    response = Response(json.dumps(status), status=200, mimetype='application/json')
     return response
 
-@app.route('/item/remove', methods=['DELETE'])
-def delete_item():
-    # Get item from the POST body
+
+
+#Obtiene los turnos de un profesional en un dia particular
+@app.route('/events/getProfessionalDayEvents', methods=['POST'])
+def get_professional_day_events():
     req_data = request.get_json()
-    itemid = req_data['itemid']
+    clinicID = req_data['clinicID']
+    professionalID = req_data['professionalID']
+    date = req_data['date']
+    data = [clinicID,professionalID,date]
+    
 
-    # Delete item from the list
-    res_data = helper.delete_item(itemid)
+    # Get items from the helper
+    status = helper.get_professional_day_events(data)
 
-    # Return error if the item could not be deleted
-    if res_data is None:
-        respuesta = {"error" : "No se encontró el item " + str(itemid) + "."}
-        response = Response(json.dumps(respuesta), status=400 , mimetype='application/json')
+    # Return 404 if item not found
+    if status is None:
+        respuesta = {"error":"Schedule not found (clinicID = " + str(clinicID) + " professionalID = " + str(professionalID) + ")."}
+        response = Response(json.dumps(respuesta), status=404 , mimetype='application/json')
         return response
 
-    # Return response
-    response = Response(json.dumps(res_data), mimetype='application/json')
+    # Return status
+    """res_data = {
+        'status': status
+    }"""
 
+    response = Response(json.dumps(status), status=200, mimetype='application/json')
     return response
+
+
+
+
+
+#Obtiene los el horario de un profesional todos los dias
+@app.route('/events/getProfessionalSchedule', methods=['GET'])
+def get_professional_schedule():
+    clinicID = request.args.get('clinicID')
+    professionalID = request.args.get('professionalID')
+
+
+    # Get items from the helper
+    status = helper.get_professional_schedule(clinicID,professionalID)
+
+    # Return 404 if item not found
+    if status is None:
+        respuesta = {"error":"Schedule not found (clinicID = " + str(clinicID) + " professionalID = " + str(professionalID) + ")."}
+        response = Response(json.dumps(respuesta), status=404 , mimetype='application/json')
+        return response
+
+    # Return status
+    """res_data = {
+        'status': status
+    }"""
+
+    response = Response(json.dumps(status), status=200, mimetype='application/json')
+    return response
+
+
+
+
+
+
+#Obtiene los el horario de un profesional en un dia particular
+@app.route('/events/getProfessionalDaySchedule', methods=['POST'])
+def get_professional_day_schedule():
+    req_data = request.get_json()
+    clinicID = req_data['clinicID']
+    professionalID = req_data['professionalID']
+    date = req_data['date']
+    data = [clinicID,professionalID,date]
+    
+
+    # Get items from the helper
+    status = helper.get_professional_day_schedule(data)
+
+    # Return 404 if item not found
+    if status is None:
+        respuesta = {"error":"Schedule not found (clinicID = " + str(clinicID) + " professionalID = " + str(professionalID) + ")."}
+        response = Response(json.dumps(respuesta), status=404 , mimetype='application/json')
+        return response
+
+    # Return status
+    """res_data = {
+        'status': status
+    }"""
+
+    response = Response(json.dumps(status), status=200, mimetype='application/json')
+    return response
+
+
 
 if __name__ == '__main__':    
     app.run(debug=True, use_reloader=True)
