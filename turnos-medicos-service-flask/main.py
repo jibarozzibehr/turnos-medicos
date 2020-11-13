@@ -76,8 +76,6 @@ def update_event():
     return response
 
 
-##########################################################################
-# Seguir a partir de acá.
 
 
 #Obtiene todos los turnos de un cliente
@@ -102,6 +100,8 @@ def get_client_events():
     response = Response(json.dumps(status), status=200, mimetype='application/json')
     return response
 
+##########################################################################
+# Seguir a partir de acá.
 
 
 #Obtiene todos los turnos de un profesional
@@ -136,8 +136,9 @@ def get_professional_day_events():
     req_data = request.get_json()
     clinicID = req_data['clinicID']
     professionalID = req_data['professionalID']
-    date = req_data['date']
-    data = [clinicID,professionalID,date]
+    beginDate = req_data['beginDate']
+    finishDate = req_data['finishDate']
+    data = [clinicID,professionalID,beginDate,finishDate]
     
 
     # Get items from the helper

@@ -18,7 +18,7 @@ def get_client_events(clientID):
         conn.commit()
 
         if rowCount == 0:
-            return None
+            return {"error": 1, "status": 'There are no events'}
             
         objects_list = []
         for row in rows:
@@ -36,10 +36,10 @@ def get_client_events(clientID):
             d['Titulo'] = row[10]
             d['Descripcion'] = row[11]
             objects_list.append(d)
-        return objects_list
+        return {"error": 0, "status": objects_list}
     except Exception as e:
-        print('Error: ', e)
-        return None
+        print('Error: ', str(e))
+        return {"error": 2, "status": str(e)}
 
 def add_event(data):
     try:
@@ -71,8 +71,8 @@ def add_event(data):
         conn.commit()
         return {"error": 0, "status": 'Success'}
     except Exception as e:
-        print('Error: ', e)
-        return {"error": 1, "status": e}
+        print('Error: ', str(e))
+        return {"error": 1, "status": str(e)}
 
 def update_event(data):
     try:
@@ -101,59 +101,145 @@ def update_event(data):
         else:
             return {"error": 0, "status": "Success"}
     except Exception as e:
-        print('Error: ', e)
-        return {"error": 2, "status": e}
+        print('Error: ', str(e))
+        return {"error": 2, "status": str(e)}
 
-def get_all_items():
+
+
+
+
+
+def get_professional_events(clinicID,professionalID):
     try:
         conn = sqlite3.connect(DB_PATH)
         c = conn.cursor()
-        c.execute('select * from items')
+        c.execute("select * from Turnos where Clinica_ID=? AND Profesional_Matricula=?", (clinicID,professionalID))
         rows = c.fetchall()
+        rowCount = len(rows)
+        conn.commit()
 
-        """
-        rowarray_list = []
-
-        for row in rows:
-            t = (row[0], row[1], row[2])
-            rowarray_list.append(t)
-
-        respuesta = {"items" : rowarray_list}
-        j = json.dumps(respuesta)
-        """
-
+        if rowCount == 0:
+            return {"error": 1, "status": "There are no events"}
+            
         objects_list = []
-        
         for row in rows:
             d = collections.OrderedDict()
-            d['id'] = row[0]
-            d['item'] = row[1]
-            d['status'] = row[2]
+            d['ID'] = row[0]
+            d['Clinica_ID'] = row[1]
+            d['Profesional_Matricula'] = row[2]
+            d['Cod_Paciente'] = row[3]
+            d['Practica_ID'] = row[4]
+            d['Fecha_Reserva'] = row[5]
+            d['Fecha_Turno'] = row[6]
+            d['Notificado'] = row[7]
+            d['Cancelado'] = row[8]
+            d['Finalizado'] = row[9]
+            d['Titulo'] = row[10]
+            d['Descripcion'] = row[11]
             objects_list.append(d)
-
-        respuesta = {"items" : objects_list}
-        #j = json.dumps(respuesta)
-
-        return respuesta
+        return {"error": 0, "status": objects_list}
     except Exception as e:
-        print('Error: ', e)
-        return None
+        print('Error: ', str(e))
+        return {"error": 0, "status": str(e)}
 
 
 
 
 
-def delete_item(itemid):
+def get_professional_day_events(data):
+    try:
+        clinicID = data[0]
+        professionalID = data[1]
+        beginDate = data[2]
+        finishDate = data[3]
+
+        conn = sqlite3.connect(DB_PATH)
+        c = conn.cursor()
+        
+        c.execute('select * from Turnos where Clinica_ID=? AND Profesional_Matricula=? AND Fecha_Turno <= ? AND Fecha_Turno >= ?',(clinicID,professionalID,finishDate,beginDate))
+
+        rows = c.fetchall()
+        rowCount = len(rows)
+        conn.commit()
+        if rowCount == 0:
+            {"error": 1, "status":"There are no events"}
+            
+        objects_list = []
+        for row in rows:
+            d = collections.OrderedDict()
+            d['ID'] = row[0]
+            d['Clinica_ID'] = row[1]
+            d['Profesional_Matricula'] = row[2]
+            d['Cod_Paciente'] = row[3]
+            d['Practica_ID'] = row[4]
+            d['Fecha_Reserva'] = row[5]
+            d['Fecha_Turno'] = row[6]
+            d['Notificado'] = row[7]
+            d['Cancelado'] = row[8]
+            d['Finalizado'] = row[9]
+            d['Titulo'] = row[10]
+            d['Descripcion'] = row[11]
+            objects_list.append(d)
+        return {"error": 0, "status": objects_list}
+    except Exception as e:
+        print('Error: ', str(e))
+        return {"error": 2, "status": str(e)}
+
+
+
+
+
+def get_professional_schedule(clinicID,professionalID):
     try:
         conn = sqlite3.connect(DB_PATH)
         c = conn.cursor()
-        c.execute('delete from items where id=?', (itemid,))
-        rowCount = c.rowcount
+        c.execute("select * from Horarios where Clinica_ID=? AND Profesional_Matricula=?", (clinicID,professionalID))
+        rows = c.fetchall()
+        rowCount = len(rows)
+        conn.commit()
+
+        if rowCount == 0:
+            return {"error": 1, "status": "There are no Schedule for this professional"}
+            
+        objects_list = []
+        for row in rows:
+            d = collections.OrderedDict()
+            d['Dia'] = row[3]
+            d['Horario_Inicio'] = row[4]
+            d['Horario_Fin'] = row[5]
+            objects_list.append(d)
+        return {"error": 0, "status": objects_list}
+    except Exception as e:
+        print('Error: ', str(e))
+        return {"error": 2, "status": str(e)}
+
+
+def get_professional_day_schedule(data):
+    try:
+        clinicID = data[0]
+        professionalID = data[1]
+        date = data[2]
+
+        conn = sqlite3.connect(DB_PATH)
+        c = conn.cursor()
+        
+        c.execute('select * from Horarios where Clinica_ID=? AND Profesional_Matricula=? AND Dia = ?',(clinicID,professionalID,date))
+
+        rows = c.fetchall()
+        rowCount = len(rows)
         conn.commit()
         if rowCount == 0:
-            return {"error" : "El item " + itemid + " no existe."}
-        else:
-            return {"Item eliminado": itemid}
+            return {"error": 1, "status": "There are no Schedule for this professional in this day"}
+            
+        objects_list = []
+        for row in rows:
+            d = collections.OrderedDict()
+            d['Dia'] = row[3]
+            d['Horario_Inicio'] = row[4]
+            d['Horario_Fin'] = row[5]
+            objects_list.append(d)
+        return {"error": 0, "status": objects_list}
     except Exception as e:
-        print('Error: ', e)
-        return None
+        print('Error: ', str(e))
+        return {"error": 2, "status": str(e)}
+
