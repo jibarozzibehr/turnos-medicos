@@ -17,16 +17,15 @@ def add_event():
     codClient = req_data['codClient']
     practiceID = req_data['practiceID']
     reservationDate = req_data['reservationDate']
-    day = req_data['day']
+    appointmentDay = req_data['appointmentDay']
     notified = req_data['notified']
     cancelled = req_data['cancelled']
     finalized = req_data['finalized']
     
-    
     title = req_data['title']
-    start = req_data['start']
     description = req_data['description']
-    data = [clinicID,professionalID,codClient,practiceID,reservationDate,day,notified,cancelled,finalized,title,start,description]
+
+    data = [clinicID,professionalID,codClient,practiceID,reservationDate,appointmentDay,notified,cancelled,finalized,title,description]
     
 
     # Add item to the list
@@ -42,26 +41,25 @@ def add_event():
 
     return response
 
-
 #Modifica un turno de la db
 @app.route('/events/update', methods=['PUT'])
 def update_event():
     req_data = request.get_json()
+    appointmentID = req_data['appointmentID']
     clinicID = req_data['clinicID']
     professionalID = req_data['professionalID']
     codClient = req_data['codClient']
     practiceID = req_data['practiceID']
     reservationDate = req_data['reservationDate']
-    day = req_data['day']
+    appointmentDay = req_data['appointmentDay']
     notified = req_data['notified']
     cancelled = req_data['cancelled']
     finalized = req_data['finalized']
     
-    
     title = req_data['title']
-    start = req_data['start']
     description = req_data['description']
-    data = [clinicID,professionalID,codClient,practiceID,reservationDate,day,notified,cancelled,finalized,title,start,description]
+
+    data = [appointmentID, clinicID,professionalID,codClient,practiceID,reservationDate,appointmentDay,notified,cancelled,finalized,title,description]
     
 
     # Add item to the list
@@ -78,6 +76,8 @@ def update_event():
     return response
 
 
+##########################################################################
+# Seguir a partir de acá.
 
 
 #Obtiene todos los turnos de un cliente

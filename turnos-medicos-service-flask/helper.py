@@ -8,8 +8,53 @@ COMPLETED = 'Completed'
 import json
 import collections
 
-def add_to_list(item):
+def get_client_events(clientID):
     try:
+        conn = sqlite3.connect(DB_PATH)
+        c = conn.cursor()
+        c.execute("select * from Turnos where Cod_Paciente=%s" % clientID)
+        rows = c.fetchall()
+        rowCount = len(rows)
+        conn.commit()
+
+        if rowCount == 0:
+            return None
+            
+        objects_list = []
+        for row in rows:
+            d = collections.OrderedDict()
+            d['ID'] = row[0]
+            d['Clinica_ID'] = row[1]
+            d['Profesional_Matricula'] = row[2]
+            d['Cod_Paciente'] = row[3]
+            d['Practica_ID'] = row[4]
+            d['Fecha_Reserva'] = row[5]
+            d['Fecha_Turno'] = row[6]
+            d['Notificado'] = row[7]
+            d['Cancelado'] = row[8]
+            d['Finalizado'] = row[9]
+            d['Titulo'] = row[10]
+            d['Descripcion'] = row[11]
+            objects_list.append(d)
+        return objects_list
+    except Exception as e:
+        print('Error: ', e)
+        return None
+
+def add_event(data):
+    try:
+        clinicID = data[0]
+        professionalID = data[1]
+        codClient = data[2]
+        practiceID = data[3]
+        reservationDate = data[4]
+        appointmentDay = data[5]
+        notified = data[6]
+        cancelled = data[7]
+        finalized = data[8]
+        title = data[9]
+        description = data[10]
+
         conn = sqlite3.connect(DB_PATH)
 
         # Once a connection has been established, we use the cursor
@@ -17,14 +62,47 @@ def add_to_list(item):
         c = conn.cursor()
 
         # Keep the initial status as Not Started
-        c.execute('insert into items(item, status) values(?,?)', (item, NOTSTARTED))
+        # c.execute('insert into items(item, status) values(?,?)', (item, NOTSTARTED))
+
+        c.execute('insert into Turnos (Clinica_ID, Profesional_Matricula, Cod_Paciente, Practica_ID, Fecha_Reserva, Fecha_Turno, Notificado, Cancelado, Finalizado, Titulo, Descripcion) values(?,?,?,?,?,?,?,?,?,?,?)', (clinicID, professionalID, codClient, practiceID, reservationDate, appointmentDay, notified, cancelled, finalized, title, description))
+
 
         # We commit to save the change
         conn.commit()
-        return {"item": item, "status": NOTSTARTED}
+        return {"error": 0, "status": 'Success'}
     except Exception as e:
         print('Error: ', e)
-        return None
+        return {"error": 1, "status": e}
+
+def update_event(data):
+    try:
+        appointmentID = data[0]
+        clinicID = data[1]
+        professionalID = data[2]
+        codClient = data[3]
+        practiceID = data[4]
+        reservationDate = data[5]
+        appointmentDay = data[6]
+        notified = data[7]
+        cancelled = data[8]
+        finalized = data[9]
+        title = data[10]
+        description = data[11]
+
+        conn = sqlite3.connect(DB_PATH)
+        c = conn.cursor()
+        
+        c.execute('update Turnos set Clinica_ID=?, Profesional_Matricula=?, Cod_Paciente=?, Practica_ID=?, Fecha_Reserva=?, Fecha_Turno=?, Notificado=?, Cancelado=?, Finalizado=?, Titulo=?, Descripcion=? where id=?', (clinicID, professionalID, codClient, practiceID, reservationDate, appointmentDay, notified, cancelled, finalized, title, description,appointmentID))
+
+        rowCount = c.rowcount
+        conn.commit()
+        if rowCount == 0:   #Si no se afecto ninguna fila, es porque el itemid no existe.
+            return {"error": 1, "status": "El turno " + str(appointmentID) + " no existe."}
+        else:
+            return {"error": 0, "status": "Success"}
+    except Exception as e:
+        print('Error: ', e)
+        return {"error": 2, "status": e}
 
 def get_all_items():
     try:
@@ -61,56 +139,9 @@ def get_all_items():
         print('Error: ', e)
         return None
 
-def get_item(itemid):
-    try:
-        conn = sqlite3.connect(DB_PATH)
-        c = conn.cursor()
-        c.execute("select id, item, status from items where id=%s" % itemid)
-        rows = c.fetchall()
-        rowCount = len(rows)
-        conn.commit()
 
-        if rowCount == 0:
-            return None
-            
-        objects_list = []
-        for row in rows:
-            d = collections.OrderedDict()
-            d['id'] = row[0]
-            d['item'] = row[1]
-            d['status'] = row[2]
-            objects_list.append(d)
-        return objects_list
-    except Exception as e:
-        print('Error: ', e)
-        return None
 
-def update_status(itemid, status):
-    # Check if the passed status is a valid value
-    if (status.lower().strip() == 'not started'):
-        status = NOTSTARTED
-    elif (status.lower().strip() == 'in progress'):
-        status = INPROGRESS
-    elif (status.lower().strip() == 'completed'):
-        status = COMPLETED
-    else:
-        print("Invalid Status: " + status)
-        respuesta = {"error" : "El status '" + status + "' no existe. Las opciones son: '" + NOTSTARTED + "', '" + INPROGRESS + "' y '" + COMPLETED + "'." }
-        return respuesta
 
-    try:
-        conn = sqlite3.connect(DB_PATH)
-        c = conn.cursor()
-        c.execute('update items set status=? where id=?', (status, itemid))
-        rowCount = c.rowcount
-        conn.commit()
-        if rowCount == 0:   #Si no se afecto ninguna fila, es porque el itemid no existe.
-            return {"error" : "El item " + str(itemid) + " no existe."}
-        else:
-            return {itemid: status}
-    except Exception as e:
-        print('Error: ', e)
-        return None
 
 def delete_item(itemid):
     try:
