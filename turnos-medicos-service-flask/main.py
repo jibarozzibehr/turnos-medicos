@@ -100,8 +100,6 @@ def get_client_events():
     response = Response(json.dumps(status), status=200, mimetype='application/json')
     return response
 
-##########################################################################
-# Seguir a partir de acá.
 
 
 #Obtiene todos los turnos de un profesional
@@ -207,6 +205,30 @@ def get_professional_day_schedule():
     # Return 404 if item not found
     if status is None:
         respuesta = {"error":"Schedule not found (clinicID = " + str(clinicID) + " professionalID = " + str(professionalID) + ")."}
+        response = Response(json.dumps(respuesta), status=404 , mimetype='application/json')
+        return response
+
+    # Return status
+    """res_data = {
+        'status': status
+    }"""
+
+    response = Response(json.dumps(status), status=200, mimetype='application/json')
+    return response
+
+
+
+#Obtiene todos los turnos pendientes de un cliente
+@app.route('/events/getClientPendingEvents', methods=['GET'])
+def get_client_pending_events():
+    clientID = request.args.get('clientID')
+
+    # Get items from the helper
+    status = helper.get_client_pending_events(clientID)
+
+    # Return 404 if item not found
+    if status is None:
+        respuesta = {"error":"Client not found (clientID=" + str(clientID) + ")."}
         response = Response(json.dumps(respuesta), status=404 , mimetype='application/json')
         return response
 

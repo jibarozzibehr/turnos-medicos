@@ -243,3 +243,39 @@ def get_professional_day_schedule(data):
         print('Error: ', str(e))
         return {"error": 2, "status": str(e)}
 
+
+def get_client_pending_events(clientID):
+    try:
+        conn = sqlite3.connect(DB_PATH)
+        c = conn.cursor()
+        c.execute("select Turnos.ID, Turnos.Clinica_ID, Turnos.Profesional_Matricula, Turnos.Cod_Paciente, Turnos.Practica_ID, Turnos.Fecha_Reserva, Turnos.Fecha_Turno, Turnos.Notificado, Turnos.Cancelado, Turnos.Finalizado, Turnos.Titulo, Turnos.Descripcion, Usuarios.Nombre, Clinicas.Nombre from Turnos, Profesionales, Usuarios, Clinicas where Turnos.Cod_Paciente=? AND Turnos.Cancelado = 0 AND Turnos.Finalizado = 0 AND Turnos.Fecha_Turno >= datetime('now', '-1 hour', 'localtime') AND Turnos.Profesional_Matricula = Profesionales.Matricula AND Turnos.Clinica_ID = Clinicas.ID AND Profesionales.Usuario_ID = Usuarios.ID ORDER BY Turnos.Fecha_Turno asc;", (clientID))
+        rows = c.fetchall()
+        rowCount = len(rows)
+        conn.commit()
+
+        if rowCount == 0:
+            return {"error": 1, "status": 'There are no events'}
+            
+        objects_list = []
+        for row in rows:
+            d = collections.OrderedDict()
+            d['ID'] = row[0]
+            d['Clinica_ID'] = row[1]
+            d['Profesional_Matricula'] = row[2]
+            d['Cod_Paciente'] = row[3]
+            d['Practica_ID'] = row[4]
+            d['Fecha_Reserva'] = row[5]
+            d['Fecha_Turno'] = row[6]
+            d['Notificado'] = row[7]
+            d['Cancelado'] = row[8]
+            d['Finalizado'] = row[9]
+            d['Titulo'] = row[10]
+            d['Descripcion'] = row[11]
+
+            d['Profesional'] = row[12]
+            d['Clinica'] = row[13]
+            objects_list.append(d)
+        return {"error": 0, "status": objects_list}
+    except Exception as e:
+        print('Error: ', str(e))
+        return {"error": 2, "status": str(e)}
