@@ -75,6 +75,74 @@ def update_event():
 
     return response
 
+#Modifica un turno de la db (elimina)
+@app.route('/events/deleteEvent', methods=['PUT'])
+def delete_event():
+    req_data = request.get_json()
+    appointmentID = req_data['appointmentID']
+
+    data = [appointmentID]
+
+    
+
+    # Add item to the list
+    res_data = helper.delete_event(data)
+
+    # Return error if item not added
+    if res_data is None:
+        response = Response("{'error': 'Event not modified - ID: " + appointmentID + "'}", status=500 , mimetype='application/json')
+        return response
+
+    # Return response
+    response = Response(json.dumps(res_data), mimetype='application/json')
+
+    return response
+
+#Modifica un turno de la db (notifica)
+@app.route('/events/notifyEvent', methods=['PUT'])
+def notify_event():
+    req_data = request.get_json()
+    appointmentID = req_data['appointmentID']
+
+    data = [appointmentID]
+    
+
+    # Add item to the list
+    res_data = helper.notify_event(data)
+
+    # Return error if item not added
+    if res_data is None:
+        response = Response("{'error': 'Event not modified - ID: " + appointmentID + "'}", status=500 , mimetype='application/json')
+        return response
+
+    # Return response
+    response = Response(json.dumps(res_data), mimetype='application/json')
+
+    return response
+
+#Modifica un turno de la db (finaliza)
+@app.route('/events/finalizeEvent', methods=['PUT'])
+def finalize_event():
+    req_data = request.get_json()
+    appointmentID = req_data['appointmentID']
+
+    data = [appointmentID]
+    
+
+    # Add item to the list
+    res_data = helper.finalize_event(data)
+
+    # Return error if item not added
+    if res_data is None:
+        response = Response("{'error': 'Event not modified - ID: " + appointmentID + "'}", status=500 , mimetype='application/json')
+        return response
+
+    # Return response
+    response = Response(json.dumps(res_data), mimetype='application/json')
+
+    return response
+
+
 
 
 
@@ -240,7 +308,112 @@ def get_client_pending_events():
     response = Response(json.dumps(status), status=200, mimetype='application/json')
     return response
 
+#Obtiene todas las especialidades
+@app.route('/events/getSpecialities', methods=['GET'])
+def get_specialities():
 
+    # Get items from the helper
+    status = helper.get_specialities()
+
+    # Return 404 if item not found
+    if status is None:
+        respuesta = {"error":"Hubo un error."}
+        response = Response(json.dumps(respuesta), status=404 , mimetype='application/json')
+        return response
+
+    # Return status
+    """res_data = {
+        'status': status
+    }"""
+
+    response = Response(json.dumps(status), status=200, mimetype='application/json')
+    return response
+
+#Obtiene todas las prácticas
+@app.route('/events/getPractices', methods=['GET'])
+def get_practices():
+
+    # Get items from the helper
+    status = helper.get_practices()
+
+    # Return 404 if item not found
+    if status is None:
+        respuesta = {"error":"Hubo un error."}
+        response = Response(json.dumps(respuesta), status=404 , mimetype='application/json')
+        return response
+
+    # Return status
+    """res_data = {
+        'status': status
+    }"""
+
+    response = Response(json.dumps(status), status=200, mimetype='application/json')
+    return response
+
+#Obtiene todas las prácticas según especialidades
+@app.route('/events/getPracticesBySpecialities', methods=['GET'])
+def get_practices_by_specialities():
+    specialityID = request.args.get('specialityID')
+
+    # Get items from the helper
+    status = helper.get_practices_by_specialities(specialityID)
+
+    # Return 404 if item not found
+    if status is None:
+        respuesta = {"error":"Hubo un error."}
+        response = Response(json.dumps(respuesta), status=404 , mimetype='application/json')
+        return response
+
+    # Return status
+    """res_data = {
+        'status': status
+    }"""
+
+    response = Response(json.dumps(status), status=200, mimetype='application/json')
+    return response
+
+#Obtiene todos los profesionales
+@app.route('/events/getProfessionals', methods=['GET'])
+def get_professionals():
+
+    # Get items from the helper
+    status = helper.get_professionals()
+
+    # Return 404 if item not found
+    if status is None:
+        respuesta = {"error":"Hubo un error."}
+        response = Response(json.dumps(respuesta), status=404 , mimetype='application/json')
+        return response
+
+    # Return status
+    """res_data = {
+        'status': status
+    }"""
+
+    response = Response(json.dumps(status), status=200, mimetype='application/json')
+    return response
+
+#Obtiene todos los profesionales por especialidad
+@app.route('/events/getProfessionalsBySpecialities', methods=['GET'])
+def get_professionals_by_specialities():
+    specialityID = request.args.get('specialityID')
+
+    # Get items from the helper
+    status = helper.get_professionals_by_specialities(specialityID)
+
+    # Return 404 if item not found
+    if status is None:
+        respuesta = {"error":"Hubo un error."}
+        response = Response(json.dumps(respuesta), status=404 , mimetype='application/json')
+        return response
+
+    # Return status
+    """res_data = {
+        'status': status
+    }"""
+
+    response = Response(json.dumps(status), status=200, mimetype='application/json')
+    return response
 
 if __name__ == '__main__':    
     app.run(debug=True, use_reloader=True)

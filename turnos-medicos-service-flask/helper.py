@@ -104,6 +104,67 @@ def update_event(data):
         print('Error: ', str(e))
         return {"error": 2, "status": str(e)}
 
+def delete_event(data):
+    try:
+        appointmentID = data[0]
+        print("Hola buenas tardes")
+        print(data)
+        print(appointmentID)
+
+        conn = sqlite3.connect(DB_PATH)
+        c = conn.cursor()
+
+        print(appointmentID)
+        c.execute('update Turnos set Cancelado=1 where id=?', (str(appointmentID)))
+        print(appointmentID)
+
+        rowCount = c.rowcount
+        conn.commit()
+        if rowCount == 0:   #Si no se afecto ninguna fila, es porque el itemid no existe.
+            return {"error": 1, "status": "El turno " + str(appointmentID) + " no existe."}
+        else:
+            return {"error": 0, "status": "Success"}
+    except Exception as e:
+        print('Error: ', str(e))
+        return {"error": 2, "status": str(e)}
+
+def notify_event(data):
+    try:
+        appointmentID = data[0]
+
+        conn = sqlite3.connect(DB_PATH)
+        c = conn.cursor()
+        
+        c.execute('update Turnos set Notificado=1 where id=?', (appointmentID))
+
+        rowCount = c.rowcount
+        conn.commit()
+        if rowCount == 0:   #Si no se afecto ninguna fila, es porque el itemid no existe.
+            return {"error": 1, "status": "El turno " + str(appointmentID) + " no existe."}
+        else:
+            return {"error": 0, "status": "Success"}
+    except Exception as e:
+        print('Error: ', str(e))
+        return {"error": 2, "status": str(e)}
+
+def finalize_event(data):
+    try:
+        appointmentID = data[0]
+
+        conn = sqlite3.connect(DB_PATH)
+        c = conn.cursor()
+        
+        c.execute('update Turnos set Finalizado=1 where id=?', (appointmentID))
+
+        rowCount = c.rowcount
+        conn.commit()
+        if rowCount == 0:   #Si no se afecto ninguna fila, es porque el itemid no existe.
+            return {"error": 1, "status": "El turno " + str(appointmentID) + " no existe."}
+        else:
+            return {"error": 0, "status": "Success"}
+    except Exception as e:
+        print('Error: ', str(e))
+        return {"error": 2, "status": str(e)}
 
 
 
@@ -140,7 +201,7 @@ def get_professional_events(clinicID,professionalID):
         return {"error": 0, "status": objects_list}
     except Exception as e:
         print('Error: ', str(e))
-        return {"error": 0, "status": str(e)}
+        return {"error": 2, "status": str(e)}
 
 
 
@@ -271,9 +332,140 @@ def get_client_pending_events(clientID):
             d['Finalizado'] = row[9]
             d['Titulo'] = row[10]
             d['Descripcion'] = row[11]
-
+            
             d['Profesional'] = row[12]
             d['Clinica'] = row[13]
+            objects_list.append(d)
+        return {"error": 0, "status": objects_list}
+    except Exception as e:
+        print('Error: ', str(e))
+        return {"error": 2, "status": str(e)}
+
+def get_specialities():
+    try:
+        conn = sqlite3.connect(DB_PATH)
+        c = conn.cursor()
+        c.execute("select * from Especialidades")
+        rows = c.fetchall()
+        rowCount = len(rows)
+        conn.commit()
+
+        if rowCount == 0:
+            return {"error": 1, "status": "There are no specialities."}
+            
+        objects_list = []
+        for row in rows:
+            d = collections.OrderedDict()
+            d['ID'] = row[0]
+            d['Nombre'] = row[1]
+            objects_list.append(d)
+        return {"error": 0, "status": objects_list}
+    except Exception as e:
+        print('Error: ', str(e))
+        return {"error": 2, "status": str(e)}
+        
+def get_practices():
+    try:
+        conn = sqlite3.connect(DB_PATH)
+        c = conn.cursor()
+        c.execute("select * from Practicas")
+        rows = c.fetchall()
+        rowCount = len(rows)
+        conn.commit()
+
+        if rowCount == 0:
+            return {"error": 1, "status": "There are no practices."}
+            
+        objects_list = []
+        for row in rows:
+            d = collections.OrderedDict()
+            d['ID'] = row[0]
+            d['Nombre'] = row[1]
+            d['Duracion_Turno'] = row[2]
+            d['Especialidad_ID'] = row[3]
+            objects_list.append(d)
+        return {"error": 0, "status": objects_list}
+    except Exception as e:
+        print('Error: ', str(e))
+        return {"error": 2, "status": str(e)}
+
+
+
+def get_practices_by_specialities(specialityID):
+    try:
+        conn = sqlite3.connect(DB_PATH)
+        c = conn.cursor()
+        c.execute("select * from Practicas where Especialidad_ID=?", (specialityID))
+        rows = c.fetchall()
+        rowCount = len(rows)
+        conn.commit()
+
+        if rowCount == 0:
+            return {"error": 1, "status": "There are no practices for that speciality."}
+            
+        objects_list = []
+        for row in rows:
+            d = collections.OrderedDict()
+            d['ID'] = row[0]
+            d['Nombre'] = row[1]
+            d['Duracion_Turno'] = row[2]
+            d['Especialidad_ID'] = row[3]
+            objects_list.append(d)
+        return {"error": 0, "status": objects_list}
+    except Exception as e:
+        print('Error: ', str(e))
+        return {"error": 2, "status": str(e)}
+
+def get_professionals():
+    try:
+        conn = sqlite3.connect(DB_PATH)
+        c = conn.cursor()
+        c.execute("select Profesionales.Matricula, Profesionales.Especialidad_ID, Profesionales.Activo, Usuarios.Nombre, Usuarios.DNI, Usuarios.Telefono, Usuarios.Email from Profesionales, Usuarios where Profesionales.Usuario_ID = Usuarios.ID")
+        rows = c.fetchall()
+        rowCount = len(rows)
+        conn.commit()
+
+        if rowCount == 0:
+            return {"error": 1, "status": "There are no professionals."}
+            
+        objects_list = []
+        for row in rows:
+            d = collections.OrderedDict()
+            d['Matricula'] = row[0]
+            d['Especialidad_ID'] = row[1]
+            d['Activo'] = row[2]
+            d['Nombre'] = row[3]
+            d['DNI'] = row[4]
+            d['Telefono'] = row[5]
+            d['Email'] = row[6]
+            objects_list.append(d)
+        return {"error": 0, "status": objects_list}
+    except Exception as e:
+        print('Error: ', str(e))
+        return {"error": 2, "status": str(e)}
+
+def get_professionals_by_specialities(specialityID):
+    try:
+        conn = sqlite3.connect(DB_PATH)
+        c = conn.cursor()
+        c.execute("select Profesionales.Matricula, Profesionales.Especialidad_ID, Profesionales.Activo, Usuarios.Nombre, Usuarios.DNI, Usuarios.Telefono, Usuarios.Email from Profesionales, Usuarios where Profesionales.Usuario_ID = Usuarios.ID AND Profesionales.Especialidad_ID=?", (specialityID))
+        rows = c.fetchall()
+        rowCount = len(rows)
+        conn.commit()
+
+        if rowCount == 0:
+            return {"error": 1, "status": "There are no professionals."}
+            
+        objects_list = []
+        for row in rows:
+            d = collections.OrderedDict()
+            d['Matricula'] = row[0]
+            d['Especialidad_ID'] = row[1]
+            d['Activo'] = row[2]
+            d['Nombre'] = row[3]
+            d['DNI'] = row[4]
+            d['Telefono'] = row[5]
+            d['Email'] = row[6]
             objects_list.append(d)
         return {"error": 0, "status": objects_list}
     except Exception as e:
