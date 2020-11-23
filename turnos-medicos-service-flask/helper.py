@@ -471,3 +471,35 @@ def get_professionals_by_specialities(specialityID):
     except Exception as e:
         print('Error: ', str(e))
         return {"error": 2, "status": str(e)}
+
+
+
+def get_clinics():
+    print('Hola')
+    try:
+        
+        conn = sqlite3.connect(DB_PATH)
+        c = conn.cursor()
+        c.execute("select * from Clinicas")
+        rows = c.fetchall()
+        rowCount = len(rows)
+        conn.commit()
+
+        if rowCount == 0:
+            return {"error": 1, "status": "There are no clinics."}
+            
+        objects_list = []
+        for row in rows:
+            d = collections.OrderedDict()
+            d['ID'] = row[0]
+            d['Nombre'] = row[1]
+            d['Direccion'] = row[2]
+            d['Telefono'] = row[3]
+            objects_list.append(d)
+        return {"error": 0, "status": objects_list}
+    except Exception as e:
+        print('Error: ', str(e))
+        return {"error": 2, "status": str(e)}
+
+
+        

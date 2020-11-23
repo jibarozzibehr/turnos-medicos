@@ -81,6 +81,40 @@
             x.options.add(c);
             //console.log(c);
         }
+        window.$("#Practicas").empty();
+        window.$("#Profesionales").empty();
+        window.$("#Practicas").prop("disabled", true);
+        window.$("#Profesionales").prop("disabled", true);
+    }
+
+
+    async function listarClinicas() {
+        const response = await fetch("http://localhost:5000/events/getClinics")
+
+        const clinicas = await response.json();
+        
+        window.$("#Clinicas").empty();
+
+        var x = document.getElementById("Clinicas");
+        var c = document.createElement("option");
+        c.text = "Seleccione una clinica";
+        x.options.add(c);
+        c.selected = true;
+        c.hidden = true;
+        c.value = 0;
+        x.options.add(c);
+        //console.log(c);
+        for (var i = 0; i < clinicas.status.length; i++) {
+            c = document.createElement("option");
+            c.text = clinicas.status[i].Nombre;
+            c.value = clinicas.status[i].ID;
+            x.options.add(c);
+            //console.log(c);
+        }
+        window.$("#Practicas").empty();
+        window.$("#Profesionales").empty();
+        window.$("#Practicas").prop("disabled", true);
+        window.$("#Profesionales").prop("disabled", true);
     }
 
     async function listarPracticas() {
@@ -177,6 +211,16 @@
         
     }
 
+
+
+    function listarAll(){
+        if(window.$("#Especialidades").val()!=0 && window.$("#Clinicas").val()!=0){
+            listarProfesionales();
+            //console.log(moment().format('YYYY-MM-DD HH:MM'));
+        }
+    }
+
+
     
 
     function loadCalendar(eventos) {
@@ -187,7 +231,17 @@
                 //window.$("#exampleModal").modal();
                 console.log(info);
                 
+                volver();
+                window.$("#Titulo").val("");
+                
+                window.$("#Descripcion").val("");
+
                 listarEspecialidades();     //Pide datos y llena el select.
+                listarClinicas();
+
+                
+                window.$("#DiaTurno").html(moment(info.dateStr).format('DD/MM/YYYY'));
+                
 
                 window.$("#addTurnoModal").modal();
 
@@ -297,6 +351,39 @@
         }
 
     }
+
+
+
+    function siguientePaso(){
+        //alert("To Do!");
+        window.$("#divEspecialidades").hide();
+        window.$("#divPracticas").hide();
+        window.$("#divClinicas").hide();
+        window.$("#divProfesionales").hide();
+        window.$("#divFecha").hide();
+        window.$("#divBotones1").hide();
+        window.$("#divTitulo").show();
+        window.$("#divDescripcion").show();
+        window.$("#divBotones2").show();
+    }
+
+
+    function volver(){
+        //alert("To Do!");
+        window.$("#divEspecialidades").show();
+        window.$("#divPracticas").show();
+        window.$("#divClinicas").show();
+        window.$("#divProfesionales").show();
+        window.$("#divFecha").show();
+        window.$("#divBotones1").show();
+        window.$("#divTitulo").hide();
+        window.$("#divDescripcion").hide();
+        window.$("#divBotones2").hide();
+    }
+
+    function agregarTurno(){
+        alert("To Do!");
+    }
     
 
 
@@ -333,7 +420,7 @@
   </div>
 </div>
 
-<div class="modal fade" id="addTurnoModal" tabindex="-1" role="dialog">
+<div class="modal fade " id="addTurnoModal" tabindex="-1" role="dialog">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
@@ -345,29 +432,62 @@
       <div class="centrado">
         <div class="modal-body" id="eventDescription">
 
-            <div class="form-group form-row align-items-end">
-                <label class="col-md-12">Especialidad</label>
-                <select name="Especialidades" id="Especialidades" class="form-control" on:change={() => {listarPracticas(); listarProfesionales();}}>
+            <div id="divEspecialidades" class="form-group form-row align-items-end">
+                <label class="col-md-12" for="Especialidades">Especialidad</label>
+                <select name="Especialidades" id="Especialidades" class="form-control" on:change={() => {listarPracticas(); listarAll();}}>
                 </select>
             </div>
 
-            <div class="form-group form-row align-items-end">
-                <label class="col-md-12">Práctica</label>
+            <div id="divPracticas" class="form-group form-row align-items-end">
+                <label class="col-md-12" for="Practicas"> Práctica</label>
                 <select name="Practicas" id="Practicas" class="form-control">
                 </select>
             </div>
 
-            <div class="form-group form-row align-items-end">
-                <label class="col-md-12">Profesionales</label>
+            <div id="divClinicas" class="form-group form-row align-items-end">
+                <label class="col-md-12" for="Clinicas"> Clínica</label>
+                <select name="Clinicas" id="Clinicas" class="form-control" on:change={() => {listarAll();}}>
+                </select>
+            </div>
+
+            <div id="divProfesionales" class="form-group form-row align-items-end">
+                <label class="col-md-12" for="Profesionales">Profesionales</label>
                 <select name="Profesionales" id="Profesionales" class="form-control">
                 </select>
             </div>
+            <div id="divFecha" class="form-group form-row align-items-end">
+                <label class="col-md-4" for="DiaTurno">Fecha del turno:</label> 
+                <p class="col-md-8" id="DiaTurno" name="DiaTurno"></p>
+                <!--<input type="date" class="form-control" id="DiaTurno" name="DiaTurno" placeholder="DD/MM/YYY" disabled> -->
+            </div>
+
+            <div id="divTitulo" class="form-group form-row align-items-end">
+                <label class="col-md-4" for="Titulo">Razón de su visita:</label> 
+                <input type="text" class="form-control" id="Titulo" name="Titulo" placeholder="Razón">
+            </div>
+
+            <div id="divDescripcion" class="form-group form-row align-items-end">
+                <label class="col-md-4" for="Descripcion">Descipción</label> 
+                <textarea class="form-control" id="Descripcion" name="Descripcion" rows="3" placeholder="Describa brevemente sus síntomas"></textarea>
+            </div>
+
+
+            
+            
 
         </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-success" on:click={() => cancelarTurno()}>Agregar turno</button>
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+        <div id="divBotones1">
+            <button type="button" class="btn btn-primary" on:click={() => siguientePaso()}>Siguiente</button>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+        </div>
+        <div id="divBotones2">
+            <button type="button" class="btn btn-secondary" on:click={() => volver()}>Volver</button>
+            <button type="button" class="btn btn-success" on:click={() => agregarTurno()}>Agregar</button>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+            
+        </div>
         
       </div>
     </div>
