@@ -2,6 +2,7 @@
 	import { Router, Route, Link, link } from 'svelte-routing';
 	import Home from "./Home/Home.svelte";
 	import Client from "./Client/Client.svelte";
+	import Professional from "./Professional/Professional.svelte";
 
 	export let page;
 
@@ -46,6 +47,7 @@
 						
 						<a href="/" use:link class="nav-item nav-link">Home</a>
 						<a href="/misturnos" use:link class="nav-item nav-link">Mis turnos</a>
+						<a href="/profesional" use:link class="nav-item nav-link">Profesional</a>
 						
 						<!--<Link to="/" class="nav-item nav-link"> Home </Link>
 						<Link to="/misturnos" class="nav-item nav-link"> Mis turnos </Link>-->
@@ -66,6 +68,7 @@
 		<div>
 			<Route path="/" component={Home}>  </Route>
 			<Route path="/misturnos" component={Client}>  </Route>
+			<Route path="/profesional" component={Professional}>  </Route>
 		</div>
 	</Router>
 

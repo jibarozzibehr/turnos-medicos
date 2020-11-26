@@ -30,8 +30,11 @@
             plantilla += '<h6 class="text-left">Con ' + turnos.status[0].Profesional + ' en la clínica ' + turnos.status[0].Clinica + '</h6>';
             plantilla += '<h6 class="text-left">Asunto: ' + turnos.status[0].Titulo + '</h6>';
             plantilla += '<div class="text-right"> <button type="button" class="btn btn-primary">Más detalles</button> </div>'
+        } else if (turnos.error == 1) {
+            //plantilla = '<h2 class="text-left">Su próximo turno es:</h2>'
+            plantilla += "<h5>No tiene turnos pendientes.</h5>";
         } else {
-            plantilla = "Hola ";
+            plantilla += "<h5>Error.</h5>";
         }
         
         window.$("#proximoTurno").html(plantilla);

@@ -194,6 +194,25 @@ def get_professional_events():
     response = Response(json.dumps(status), status=200, mimetype='application/json')
     return response
 
+#Obtiene todos los turnos de un profesional no cancelados ni finalizados. Próximos a la fecha actual.
+@app.route('/events/getProfessionalEventsNotCancelled', methods=['GET'])
+def get_professional_events_not_cancelled():
+    clinicID = request.args.get('clinicID')
+    professionalID = request.args.get('professionalID')
+
+
+    # Get items from the helper
+    status = helper.get_professional_events_not_cancelled(clinicID,professionalID)
+
+    # Return 404 if item not found
+    if status is None:
+        respuesta = {"error":"Professional not found (clinicID = " + str(clinicID) + " professionalID = " + str(professionalID) + ")."}
+        response = Response(json.dumps(respuesta), status=404 , mimetype='application/json')
+        return response
+
+    response = Response(json.dumps(status), status=200, mimetype='application/json')
+    return response
+
 
 
 #Obtiene los turnos de un profesional en un dia particular
@@ -223,6 +242,7 @@ def get_professional_day_events():
 
     response = Response(json.dumps(status), status=200, mimetype='application/json')
     return response
+
 
 
 
@@ -419,13 +439,35 @@ def get_professionals_by_specialities():
 
 
 
-    #Obtiene todas las clinicas
+#Obtiene todas las clínicas
 @app.route('/events/getClinics', methods=['GET'])
 def get_clinics():
     print('Hola')
 
     # Get items from the helper
     status = helper.get_clinics()
+
+    # Return 404 if item not found
+    if status is None:
+        respuesta = {"error":"Hubo un error."}
+        response = Response(json.dumps(respuesta), status=404 , mimetype='application/json')
+        return response
+
+    # Return status
+    """res_data = {
+        'status': status
+    }"""
+
+    response = Response(json.dumps(status), status=200, mimetype='application/json')
+    return response
+
+#Obtiene todas las clínicas en las que trabaja cierto profesional
+@app.route('/events/getProfessionalsClinics', methods=['GET'])
+def get_professionals_clinics():
+    professionalID = request.args.get('professionalID')
+
+    # Get items from the helper
+    status = helper.get_professionals_clinics(professionalID)
 
     # Return 404 if item not found
     if status is None:
