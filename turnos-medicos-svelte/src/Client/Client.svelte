@@ -85,6 +85,7 @@
         window.$("#Profesionales").empty();
         window.$("#Practicas").prop("disabled", true);
         window.$("#Profesionales").prop("disabled", true);
+        window.$("#Horarios").prop("disabled", true);
     }
 
 
@@ -115,6 +116,7 @@
         window.$("#Profesionales").empty();
         window.$("#Practicas").prop("disabled", true);
         window.$("#Profesionales").prop("disabled", true);
+        window.$("#Horarios").prop("disabled", true);
     }
 
     async function listarPracticas() {
@@ -178,6 +180,10 @@
         var c = document.createElement("option");
 
         if (profesionales.error == 0) {
+
+
+            
+
             c.text = "Seleccione un profesional";
 
             x.options.add(c);
@@ -188,16 +194,44 @@
             /*console.log(c);
             console.log(profesionales);
             console.log(profesionales.status.length);*/
-
+            var cantidad = 0;
             for (var i = 0; i < profesionales.status.length; i++) {
-                c = document.createElement("option");
-                c.text = profesionales.status[i].Nombre;
-                c.value = profesionales.status[i].ID;
+
+                let data = { clinicID : window.$("#Clinicas").val(),professionalID : profesionales.status[i].Matricula ,date: Number(window.$("#Diaa").val()) };
+                console.log(data);
+                const response = await fetch("http://localhost:5000/events/getProfessionalDaySchedule", {
+                    method: 'POST',
+                    headers: { 'Content-Type' : 'application/json;charset=utf-8' },
+                    body: JSON.stringify(data)
+                })
+
+                const horarios = await response.json();
+            
+                //console.log(horarios);
+                if(horarios.error == 0){
+                    c = document.createElement("option");
+                    c.text = profesionales.status[i].Nombre;
+                    c.value = profesionales.status[i].Matricula;
+                    x.options.add(c);
+                    console.log(c);
+                    cantidad++;
+                }
+                
+            }
+
+            if(cantidad>0){
+                window.$("#Profesionales").prop("disabled", false);
+            }else{
+                c.text = "Esta especialidad no tiene profesionales trabajando el dia seleccionado.";
+                c.selected = true;
+                c.hidden = true;
+                c.value = 0;
                 x.options.add(c);
-                //console.log(c);
+                window.$("#Profesionales").prop("disabled", true);
+                window.$("#Horarios").empty();
+                window.$("#Horarios").prop("disabled", true);
             }
             
-            window.$("#Profesionales").prop("disabled", false);
 
         } else {
             c.text = "Esta especialidad aún no tiene profesionales.";
@@ -206,7 +240,11 @@
             c.value = 0;
             x.options.add(c);
             window.$("#Profesionales").prop("disabled", true);
+            window.$("#Horarios").empty();
+            window.$("#Horarios").prop("disabled", true);
         }
+
+        listarHorarios();
 
         
     }
@@ -241,10 +279,15 @@
 
                 
                 window.$("#DiaTurno").html(moment(info.dateStr).format('DD/MM/YYYY'));
+                window.$("#Fechaa").val(moment(info.dateStr).format('YYYY-MM-DD'));
+                var dt = new Date(moment(info.dateStr));
+                
+                //window.$("#DiaTurno").html(moment(info.dateStr).format('DD/MM/YYYY'));
                 
 
+                window.$("#Diaa").val(dt.getDay());
                 window.$("#addTurnoModal").modal();
-
+                console.log(window.$("#Diaa").val());
 
                 
 
@@ -365,6 +408,7 @@
         window.$("#divTitulo").show();
         window.$("#divDescripcion").show();
         window.$("#divBotones2").show();
+        window.$("#divHorarios").hide();
     }
 
 
@@ -379,13 +423,135 @@
         window.$("#divTitulo").hide();
         window.$("#divDescripcion").hide();
         window.$("#divBotones2").hide();
+        window.$("#divHorarios").show();
     }
 
     function agregarTurno(){
         alert("To Do!");
     }
     
+    async function listarHorarios() {
+        console.log("a aaaa aaa");
+        //console.log("Este es el valor de especialidad!! " + window.$("#Especialidades").val());
+        let data = { clinicID : window.$("#Clinicas").val(),professionalID : window.$("#Profesionales").val(),date: Number(window.$("#Diaa").val()) };
+        console.log(data);
+        const response = await fetch("http://localhost:5000/events/getProfessionalDaySchedule", {
+            method: 'POST',
+            headers: { 'Content-Type' : 'application/json;charset=utf-8' },
+            body: JSON.stringify(data)
+        })
 
+        const horarios = await response.json();
+        
+        console.log(horarios);
+
+        var FechaInicio = window.$("#Fechaa").val() + " 00:00";
+        var FechaFin = window.$("#Fechaa").val()+ " 23:59";
+
+        let data2 = { clinicID : window.$("#Clinicas").val(),professionalID : window.$("#Profesionales").val(),beginDate: FechaInicio, finishDate: FechaFin};
+        console.log(data2);
+
+        const response2 = await fetch("http://localhost:5000/events/getProfessionalDayEvents", {
+            method: 'POST',
+            headers: { 'Content-Type' : 'application/json;charset=utf-8' },
+            body: JSON.stringify(data2)
+        })
+
+        const turnos = await response2.json();
+        console.log(turnos);
+        //console.log("bbbbbbbbbbbbb");
+       // console.log(moment(window.$("#Fechaa").val() +" "+ (horarios.status[0].Horario_Fin)));
+
+
+            if(window.$("#Profesionales").val() == 0){
+                console.log("a verrrrrrrrrrrrrrr");
+                window.$("#Horarios").prop("disabled", true);
+                return;
+            }
+
+       var x = document.getElementById("Horarios");
+        var c = document.createElement("option");
+       if(horarios.error ==0 && turnos.error ==0){
+            var arrayHorarios = []
+            var pos=0;
+            //var str =  "2020-11-01 00:00";
+            //console.log(str.replace(/-/g,"/"));
+            var inicio = moment(window.$("#Fechaa").val() +" "+ (horarios.status[0].Horario_Inicio));
+            //console.log("   AAAAAAAAAAAAAAAA");
+            //console.log((horarios.status[0].Horario_Fin).replace(/-/g,"/"))
+            var fin = moment(window.$("#Fechaa").val() +" "+ (horarios.status[0].Horario_Fin));
+            var actual = inicio;
+            console.log(fin);
+            //console.log("Hol2222a");
+                console.log(actual);
+            var cont = 0;
+            //console.log(moment(turnos.status[0].Fecha_Turno).format("HH:mm"));
+
+            while(cont < turnos.status.length){
+                //console.log("11111111111111")
+                //console.log(actual)
+                if(moment(turnos.status[cont].Fecha_Turno).format("HH:mm") != actual.format("HH:mm")){
+                    //console.log("asdasd");
+                    //console.log(actual.format("HH:mm"));
+                    arrayHorarios[pos] = actual.format("HH:mm");
+                    pos++;
+                }else{
+                    cont++;
+                }
+                actual.add(1, 'hours');
+                
+                
+            }
+
+            
+
+            while(actual < fin ){
+                //console.log("22222222222222");
+                //console.log(actual)
+                //console.log(actual.format("HH:mm"));
+                arrayHorarios[pos] = actual.format("HH:mm");
+                pos++;
+                actual = actual.add(1, 'hours');
+            }
+
+            //console.log(arrayHorarios);
+
+            window.$("#Horarios").empty();
+
+
+           
+
+           
+               console.log("a ver");
+                c.text = "Seleccione un horario";
+
+            x.options.add(c);
+            c.selected = true;
+            c.hidden = true;
+            c.value = 0;
+            x.options.add(c);
+            /*console.log(c);
+            console.log(practicas);
+            console.log(practicas.status.length);*/
+
+            for (var i = 0; i < arrayHorarios.length; i++) {
+                c = document.createElement("option");
+                c.text = arrayHorarios[i];
+                c.value = arrayHorarios[i];
+                x.options.add(c);
+                console.log(c);
+            }
+            window.$("#Horarios").prop("disabled", false);
+           
+
+       }
+
+        //var status = moment(myDate).add(5, 'hours').format('YYYY-MM-DD hh:mm:ss');
+        
+        
+
+        
+    }
 
 </script>
 
@@ -451,8 +617,8 @@
             </div>
 
             <div id="divProfesionales" class="form-group form-row align-items-end">
-                <label class="col-md-12" for="Profesionales">Profesionales</label>
-                <select name="Profesionales" id="Profesionales" class="form-control">
+                <label class="col-md-12" for="Profesionales">Profesional</label>
+                <select name="Profesionales" id="Profesionales" class="form-control" on:change={() => {listarHorarios();}}>
                 </select>
             </div>
             <div id="divFecha" class="form-group form-row align-items-end">
@@ -460,6 +626,20 @@
                 <p class="col-md-8" id="DiaTurno" name="DiaTurno"></p>
                 <!--<input type="date" class="form-control" id="DiaTurno" name="DiaTurno" placeholder="DD/MM/YYY" disabled> -->
             </div>
+
+            <div id="divDiaa" class="form-group form-row align-items-end" hidden>
+                <label class="col-md-4" for="Dias">Dia:</label> 
+                <input type="text" id="Diaa">
+                <input type="text" id="Fechaa">
+                <!--<input type="date" class="form-control" id="DiaTurno" name="Dias" placeholder="DD/MM/YYY" disabled> -->
+            </div>
+
+            <div id="divHorarios" class="form-group form-row align-items-end">
+                <label class="col-md-12" for="Horarios"> Horario</label>
+                <select name="Horarios" id="Horarios" class="form-control">
+                </select>
+            </div>
+
 
             <div id="divTitulo" class="form-group form-row align-items-end">
                 <label class="col-md-4" for="Titulo">Razón de su visita:</label> 
