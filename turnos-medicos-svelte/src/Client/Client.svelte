@@ -465,6 +465,7 @@
 
             if(window.$("#Profesionales").val() == 0){
                 console.log("a verrrrrrrrrrrrrrr");
+                window.$("#Horarios").empty();
                 window.$("#Horarios").prop("disabled", true);
                 return;
             }
