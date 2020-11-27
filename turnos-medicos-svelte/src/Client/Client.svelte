@@ -267,6 +267,13 @@
             initialView: 'dayGridMonth',
             dateClick: function(info) {
                 //window.$("#exampleModal").modal();
+                //console.log(moment(info.dateStr).format('YYYY-MM-DD'))
+                //console.log(moment().format('YYYY-MM-DD'))
+                if(moment(info.dateStr).format('YYYY-MM-DD')<moment().format('YYYY-MM-DD')){
+                    //alert("Hola");
+                    return;
+                }
+
                 console.log(info);
                 
                 volver();
