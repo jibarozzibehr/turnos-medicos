@@ -399,6 +399,28 @@
 
     function siguientePaso(){
         //alert("To Do!");
+
+        if (window.$("#Especialidades").val()==0) {
+            window.$('#Especialidades').tooltip('show');
+            return;
+        }
+        if (window.$("#Practicas").val()==0) {
+            window.$('#Practicas').tooltip('show');
+            return;
+        }
+        if (window.$("#Clinicas").val()==0) {
+            window.$('#Clinicas').tooltip('show');
+            return;
+        }
+        if (window.$("#Profesionales").val()==0) {
+            window.$('#Profesionales').tooltip('show');
+            return;
+        }
+        if (window.$("#Horarios").val()==0) {
+            window.$('#Horarios').tooltip('show');
+            return;
+        }
+
         window.$("#divEspecialidades").hide();
         window.$("#divPracticas").hide();
         window.$("#divClinicas").hide();
@@ -414,6 +436,7 @@
 
     function volver(){
         //alert("To Do!");
+        
         window.$("#divEspecialidades").show();
         window.$("#divPracticas").show();
         window.$("#divClinicas").show();
@@ -427,6 +450,10 @@
     }
 
     function agregarTurno(){
+        if (window.$("#Titulo").val()=="") {
+            window.$('#Titulo').tooltip('show');
+            return;
+        }
         alert("To Do!");
     }
     
@@ -554,6 +581,33 @@
         
     }
 
+
+
+
+    window.$(document).on('click', function (e) {
+
+
+    if (!window.$("#BotonSiguiente").is(e.target)) {
+       window.$('#Especialidades').tooltip('hide');
+       window.$('#Practicas').tooltip('hide');
+       window.$('#Clinicas').tooltip('hide');
+       window.$('#Profesionales').tooltip('hide');
+       window.$('#Horarios').tooltip('hide');
+    }
+    if (!window.$("#addTurno").is(e.target)) {
+       window.$('#Titulo').tooltip('hide');
+    }
+     
+
+    });
+    window.$(function () {
+        window.$('[data-toggle="tooltip"]').tooltip({
+            trigger: 'manual'
+        })
+    })
+
+
+
 </script>
 
 <br>
@@ -601,25 +655,25 @@
 
             <div id="divEspecialidades" class="form-group form-row align-items-end">
                 <label class="col-md-12" for="Especialidades">Especialidad</label>
-                <select name="Especialidades" id="Especialidades" class="form-control" on:change={() => {listarPracticas(); listarAll();}}>
+                <select name="Especialidades" id="Especialidades" class="form-control" on:change={() => {listarPracticas(); listarAll();}} data-toggle="tooltip" data-placement="left" title="Debe seleccionar una especialidad">
                 </select>
             </div>
 
             <div id="divPracticas" class="form-group form-row align-items-end">
                 <label class="col-md-12" for="Practicas"> Práctica</label>
-                <select name="Practicas" id="Practicas" class="form-control">
+                <select name="Practicas" id="Practicas" class="form-control" data-toggle="tooltip" data-placement="left" title="Debe seleccionar una practica">
                 </select>
             </div>
 
             <div id="divClinicas" class="form-group form-row align-items-end">
                 <label class="col-md-12" for="Clinicas"> Clínica</label>
-                <select name="Clinicas" id="Clinicas" class="form-control" on:change={() => {listarAll();}}>
+                <select name="Clinicas" id="Clinicas" class="form-control" on:change={() => {listarAll();}} data-toggle="tooltip" data-placement="left" title="Debe seleccionar una clinica">
                 </select>
             </div>
 
             <div id="divProfesionales" class="form-group form-row align-items-end">
                 <label class="col-md-12" for="Profesionales">Profesional</label>
-                <select name="Profesionales" id="Profesionales" class="form-control" on:change={() => {listarHorarios();}}>
+                <select name="Profesionales" id="Profesionales" class="form-control" on:change={() => {listarHorarios();}} data-toggle="tooltip" data-placement="left" title="Debe seleccionar un profesional">
                 </select>
             </div>
             <div id="divFecha" class="form-group form-row align-items-end">
@@ -637,14 +691,14 @@
 
             <div id="divHorarios" class="form-group form-row align-items-end">
                 <label class="col-md-12" for="Horarios"> Horario</label>
-                <select name="Horarios" id="Horarios" class="form-control">
+                <select name="Horarios" id="Horarios" class="form-control" data-toggle="tooltip" data-placement="left" title="Debe seleccionar un horario">
                 </select>
             </div>
 
 
             <div id="divTitulo" class="form-group form-row align-items-end">
                 <label class="col-md-4" for="Titulo">Razón de su visita:</label> 
-                <input type="text" class="form-control" id="Titulo" name="Titulo" placeholder="Razón">
+                <input type="text" class="form-control" id="Titulo" name="Titulo" placeholder="Razón" data-toggle="tooltip" data-placement="left" title="Debe detallar una razon para su visita">
             </div>
 
             <div id="divDescripcion" class="form-group form-row align-items-end">
@@ -660,12 +714,12 @@
       </div>
       <div class="modal-footer">
         <div id="divBotones1">
-            <button type="button" class="btn btn-primary" on:click={() => siguientePaso()}>Siguiente</button>
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+            <button id="BotonSiguiente" type="button" class="btn btn-primary" on:click={() => siguientePaso()}>Siguiente</button>
+            <button id ="BotonCancelar1" type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
         </div>
         <div id="divBotones2">
             <button type="button" class="btn btn-secondary" on:click={() => volver()}>Volver</button>
-            <button type="button" class="btn btn-success" on:click={() => agregarTurno()}>Agregar</button>
+            <button id="addTurno" type="button" class="btn btn-success" on:click={() => agregarTurno()}>Agregar</button>
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
             
         </div>
