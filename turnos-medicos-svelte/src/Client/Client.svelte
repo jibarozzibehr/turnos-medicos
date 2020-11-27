@@ -4,7 +4,7 @@
     import { onMount } from 'svelte';
   
     var valorcito = "";
-
+    var CodClienteLog = 1;
     
 
     onMount (
@@ -449,12 +449,37 @@
         window.$("#divHorarios").show();
     }
 
-    function agregarTurno(){
+    async function agregarTurno(){
+
         if (window.$("#Titulo").val()=="") {
             window.$('#Titulo').tooltip('show');
             return;
         }
-        alert("To Do!");
+
+        let data = { 
+            clinicID : window.$("#Clinicas").val(), 
+            professionalID : window.$("#Profesionales").val(), 
+            codClient: CodClienteLog, 
+            practiceID: window.$("#Practicas").val(), 
+            reservationDate: moment().format("YYYY-MM-DD HH:mm"),
+            appointmentDay: window.$("#Fechaa").val() + " " + window.$("#Horarios").val(),
+            notified: 0,
+            cancelled: 0,
+            finalized: 0,
+            title: window.$("#Titulo").val(),
+            description : window.$("#Descripcion").val()
+    };
+        console.log("Esta es la data: " + data);
+        const res = await fetch("http://localhost:5000/events/new", {
+            method: 'POST',
+            headers: { 'Content-Type' : 'application/json;charset=utf-8' },
+            body: JSON.stringify(data)
+        })
+
+        const json = await res.json();
+
+        console.log(json);
+        
     }
     
     async function listarHorarios() {
