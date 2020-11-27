@@ -9,7 +9,7 @@
 
     onMount (
         async () => {
-            getTurnos(1);
+            getTurnos(CodClienteLog);
             //loadCalendar();
         }
     )
