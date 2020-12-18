@@ -2,21 +2,23 @@
     import moment  from 'moment';
     import 'moment/locale/es';
     import { onMount } from 'svelte';
-    import { idGlobal, matricula } from './../location.js';
+    import { idGlobal, codCliente } from './../location.js';
+
+    import { link, navigate } from 'svelte-routing';
   
     var valorcito = "";
-
+    var CodClienteLog = $codCliente;
     
 
     onMount (
         async () => {
-            console.log("ID Global: " + $idGlobal);
+			console.log("ID Global: " + $idGlobal);
 
 			if ($idGlobal == 0) {
 				navigate("/", { replace: true });
 
             } else {
-                getTurnos(matricula);
+                getTurnos($codCliente);
             }
             
             //loadCalendar();
@@ -24,13 +26,14 @@
     )
 
     async function getTurnos(clientID) {
-        //const response = await fetch("http://localhost:5000/events/getClientPendingEvents?clientID=" + clientID.toString())
-        const response = await fetch("http://localhost:5000/events/getProfessionalsClinics?professionalID=" + professionalID.toString());
-        const clinicas = await response.json();
+        console.log("Este es el cod cliente actual: " + CodClienteLog)
+        const response = await fetch("http://localhost:5000/events/getClientPendingEvents?clientID=" + clientID.toString())
+
+        const turnos = await response.json();
 
         //myTodo = todo.items
         
-        console.log(clinicas)
+        console.log(turnos)
 
         
         var plantilla = ""
@@ -39,11 +42,7 @@
         
 
         if (turnos.error == 0) {
-            /*for (let index = 0; index < clinicas.status.length; index++) {
-                
-            }*/
-
-            /*for (let index = 0; index < turnos.status.length; index++) {
+            for (let index = 0; index < turnos.status.length; index++) {
                 eventos[index] = [];
                 eventos[index] = {
                     //Profesional, Clinica, Descripcion, Fecha_Turno, Titulo
@@ -60,7 +59,7 @@
                 
 
                 
-            }*/
+            }
             //console.log(eventos)
         } else {
             /*plantilla = "Hola ";*/
@@ -280,6 +279,13 @@
             initialView: 'dayGridMonth',
             dateClick: function(info) {
                 //window.$("#exampleModal").modal();
+                //console.log(moment(info.dateStr).format('YYYY-MM-DD'))
+                //console.log(moment().format('YYYY-MM-DD'))
+                if(moment(info.dateStr).format('YYYY-MM-DD')<moment().format('YYYY-MM-DD')){
+                    //alert("Hola");
+                    return;
+                }
+
                 console.log(info);
                 
                 volver();
@@ -399,8 +405,10 @@
         console.log(json.error);
 
         if (json.error == 0) {
-            window.$("#exampleModal").hide();
-            location.reload();
+            window.$("#exampleModal").modal('hide');
+            getTurnos($codCliente);
+            //location.reload();
+            //navigate("/misturnos", { replace: true });
             console.log("Success");
         } else {
             console.log("Error");
@@ -412,6 +420,28 @@
 
     function siguientePaso(){
         //alert("To Do!");
+
+        if (window.$("#Especialidades").val()==0) {
+            window.$('#Especialidades').tooltip('show');
+            return;
+        }
+        if (window.$("#Practicas").val()==0) {
+            window.$('#Practicas').tooltip('show');
+            return;
+        }
+        if (window.$("#Clinicas").val()==0) {
+            window.$('#Clinicas').tooltip('show');
+            return;
+        }
+        if (window.$("#Profesionales").val()==0) {
+            window.$('#Profesionales').tooltip('show');
+            return;
+        }
+        if (window.$("#Horarios").val()==0) {
+            window.$('#Horarios').tooltip('show');
+            return;
+        }
+
         window.$("#divEspecialidades").hide();
         window.$("#divPracticas").hide();
         window.$("#divClinicas").hide();
@@ -427,6 +457,7 @@
 
     function volver(){
         //alert("To Do!");
+        
         window.$("#divEspecialidades").show();
         window.$("#divPracticas").show();
         window.$("#divClinicas").show();
@@ -439,8 +470,42 @@
         window.$("#divHorarios").show();
     }
 
-    function agregarTurno(){
-        alert("To Do!");
+    async function agregarTurno(){
+
+        if (window.$("#Titulo").val()=="") {
+            window.$('#Titulo').tooltip('show');
+            return;
+        }
+
+        let data = { 
+            clinicID : window.$("#Clinicas").val(), 
+            professionalID : window.$("#Profesionales").val(), 
+            codClient: CodClienteLog, 
+            practiceID: window.$("#Practicas").val(), 
+            reservationDate: moment().format("YYYY-MM-DD HH:mm"),
+            appointmentDay: window.$("#Fechaa").val() + " " + window.$("#Horarios").val(),
+            notified: 0,
+            cancelled: 0,
+            finalized: 0,
+            title: window.$("#Titulo").val(),
+            description : window.$("#Descripcion").val()
+    };
+        console.log("Esta es la data: " + data);
+        const res = await fetch("http://localhost:5000/events/new", {
+            method: 'POST',
+            headers: { 'Content-Type' : 'application/json;charset=utf-8' },
+            body: JSON.stringify(data)
+        })
+
+        const json = await res.json();
+
+        console.log(json);
+
+        window.$("#addTurnoModal").modal('hide');
+        getTurnos($codCliente);
+        //location.reload();
+        //navigate("/misturnos", { replace: true });
+        
     }
     
     async function listarHorarios() {
@@ -456,6 +521,7 @@
 
         const horarios = await response.json();
         
+        console.log("horarios");
         console.log(horarios);
 
         var FechaInicio = window.$("#Fechaa").val() + " 00:00";
@@ -471,6 +537,7 @@
         })
 
         const turnos = await response2.json();
+        console.log("turnos");
         console.log(turnos);
         //console.log("bbbbbbbbbbbbb");
        // console.log(moment(window.$("#Fechaa").val() +" "+ (horarios.status[0].Horario_Fin)));
@@ -478,6 +545,7 @@
 
             if(window.$("#Profesionales").val() == 0){
                 console.log("a verrrrrrrrrrrrrrr");
+                window.$("#Horarios").empty();
                 window.$("#Horarios").prop("disabled", true);
                 return;
             }
@@ -566,7 +634,56 @@
         
     }
 
+
+
+
+    window.$(document).on('click', function (e) {
+
+
+    if (!window.$("#BotonSiguiente").is(e.target)) {
+       window.$('#Especialidades').tooltip('hide');
+       window.$('#Practicas').tooltip('hide');
+       window.$('#Clinicas').tooltip('hide');
+       window.$('#Profesionales').tooltip('hide');
+       window.$('#Horarios').tooltip('hide');
+    }
+    if (!window.$("#addTurno").is(e.target)) {
+       window.$('#Titulo').tooltip('hide');
+    }
+     
+
+    });
+    window.$(function () {
+        window.$('[data-toggle="tooltip"]').tooltip({
+            trigger: 'manual'
+        })
+    })
+
+
+
 </script>
+
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light">	
+
+    <div class="container">
+        <a class="navbar-brand" href="/">Turnos</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+            <div id="navBar" class="navbar-nav ml-auto">
+
+                <a href="/" use:link class="nav-item nav-link">Home</a>
+                <a href="/misturnos" use:link class="nav-item nav-link">Mis turnos</a>
+                <a href="/logout" use:link class="nav-item nav-link">Cerrar sesión</a>
+
+            </div>
+        </div>
+    </div>
+
+</nav>
+
 
 <br>
 <h1>Mis turnos</h1>
@@ -613,25 +730,25 @@
 
             <div id="divEspecialidades" class="form-group form-row align-items-end">
                 <label class="col-md-12" for="Especialidades">Especialidad</label>
-                <select name="Especialidades" id="Especialidades" class="form-control" on:change={() => {listarPracticas(); listarAll();}}>
+                <select name="Especialidades" id="Especialidades" class="form-control" on:change={() => {listarPracticas(); listarAll();}} data-toggle="tooltip" data-placement="left" title="Debe seleccionar una especialidad">
                 </select>
             </div>
 
             <div id="divPracticas" class="form-group form-row align-items-end">
                 <label class="col-md-12" for="Practicas"> Práctica</label>
-                <select name="Practicas" id="Practicas" class="form-control">
+                <select name="Practicas" id="Practicas" class="form-control" data-toggle="tooltip" data-placement="left" title="Debe seleccionar una practica">
                 </select>
             </div>
 
             <div id="divClinicas" class="form-group form-row align-items-end">
                 <label class="col-md-12" for="Clinicas"> Clínica</label>
-                <select name="Clinicas" id="Clinicas" class="form-control" on:change={() => {listarAll();}}>
+                <select name="Clinicas" id="Clinicas" class="form-control" on:change={() => {listarAll();}} data-toggle="tooltip" data-placement="left" title="Debe seleccionar una clinica">
                 </select>
             </div>
 
             <div id="divProfesionales" class="form-group form-row align-items-end">
                 <label class="col-md-12" for="Profesionales">Profesional</label>
-                <select name="Profesionales" id="Profesionales" class="form-control" on:change={() => {listarHorarios();}}>
+                <select name="Profesionales" id="Profesionales" class="form-control" on:change={() => {listarHorarios();}} data-toggle="tooltip" data-placement="left" title="Debe seleccionar un profesional">
                 </select>
             </div>
             <div id="divFecha" class="form-group form-row align-items-end">
@@ -649,14 +766,14 @@
 
             <div id="divHorarios" class="form-group form-row align-items-end">
                 <label class="col-md-12" for="Horarios"> Horario</label>
-                <select name="Horarios" id="Horarios" class="form-control">
+                <select name="Horarios" id="Horarios" class="form-control" data-toggle="tooltip" data-placement="left" title="Debe seleccionar un horario">
                 </select>
             </div>
 
 
             <div id="divTitulo" class="form-group form-row align-items-end">
                 <label class="col-md-4" for="Titulo">Razón de su visita:</label> 
-                <input type="text" class="form-control" id="Titulo" name="Titulo" placeholder="Razón">
+                <input type="text" class="form-control" id="Titulo" name="Titulo" placeholder="Razón" data-toggle="tooltip" data-placement="left" title="Debe detallar una razon para su visita">
             </div>
 
             <div id="divDescripcion" class="form-group form-row align-items-end">
@@ -672,12 +789,12 @@
       </div>
       <div class="modal-footer">
         <div id="divBotones1">
-            <button type="button" class="btn btn-primary" on:click={() => siguientePaso()}>Siguiente</button>
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+            <button id="BotonSiguiente" type="button" class="btn btn-primary" on:click={() => siguientePaso()}>Siguiente</button>
+            <button id ="BotonCancelar1" type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
         </div>
         <div id="divBotones2">
             <button type="button" class="btn btn-secondary" on:click={() => volver()}>Volver</button>
-            <button type="button" class="btn btn-success" on:click={() => agregarTurno()}>Agregar</button>
+            <button id="addTurno" type="button" class="btn btn-success" on:click={() => agregarTurno()}>Agregar</button>
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
             
         </div>

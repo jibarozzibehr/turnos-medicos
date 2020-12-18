@@ -135,7 +135,7 @@ def notify_event(data):
         conn = sqlite3.connect(DB_PATH)
         c = conn.cursor()
         
-        c.execute('update Turnos set Notificado=1 where id=?', (appointmentID))
+        c.execute('update Turnos set Notificado=1 where id=?', (appointmentID,))
 
         rowCount = c.rowcount
         conn.commit()
@@ -154,7 +154,7 @@ def finalize_event(data):
         conn = sqlite3.connect(DB_PATH)
         c = conn.cursor()
         
-        c.execute('update Turnos set Finalizado=1 where id=?', (appointmentID))
+        c.execute('update Turnos set Finalizado=1 where id=?', (appointmentID,))
 
         rowCount = c.rowcount
         conn.commit()
