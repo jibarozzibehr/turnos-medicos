@@ -115,7 +115,7 @@ def delete_event(data):
         c = conn.cursor()
 
         print(appointmentID)
-        c.execute('update Turnos set Cancelado=1 where id=?', (str(appointmentID)))
+        c.execute('update Turnos set Cancelado=1 where id=?', (appointmentID,))
         print(appointmentID)
 
         rowCount = c.rowcount
@@ -539,7 +539,7 @@ def get_professionals_clinics(professionalID):
     try:
         conn = sqlite3.connect(DB_PATH)
         c = conn.cursor()
-        c.execute("select Clinicas.ID, Clinicas.Nombre from Clinicas, Clinicas_Profesionales where Clinicas_Profesionales.Profesional_Matricula = ? and Clinicas_Profesionales.Clinica_ID = Clinicas.ID", (professionalID))
+        c.execute("select Clinicas.ID, Clinicas.Nombre from Clinicas, Clinicas_Profesionales where Clinicas_Profesionales.Profesional_Matricula = ? and Clinicas_Profesionales.Clinica_ID = Clinicas.ID", (professionalID,))
         rows = c.fetchall()
         rowCount = len(rows)
         conn.commit()
@@ -554,6 +554,89 @@ def get_professionals_clinics(professionalID):
             d['Nombre'] = row[1]
             objects_list.append(d)
         return {"error": 0, "status": objects_list}
+    except Exception as e:
+        print('Error: ', str(e))
+        return {"error": 2, "status": str(e)}
+
+
+def login(email, password):
+    try:
+        conn = sqlite3.connect(DB_PATH)
+        c = conn.cursor()
+        c.execute("select ID from Usuarios where Email=? COLLATE NOCASE and Contraseña=? ", (email, password))
+        rows = c.fetchall()
+        rowCount = len(rows)
+        conn.commit()
+
+        if rowCount == 0:
+            return {"error": 1, "status": "Email o contraseña incorrectos."}
+            
+        objects_list = []
+        for row in rows:
+            d = collections.OrderedDict()
+            d['ID'] = row[0]
+            objects_list.append(d)
+        return {"error": 0, "status": objects_list}
+    except Exception as e:
+        print('Error: ', str(e))
+        return {"error": 2, "status": str(e)}
+
+
+
+def isProfessional(userID):
+    try:
+        conn = sqlite3.connect(DB_PATH)
+        c = conn.cursor()
+        c.execute("select Matricula from Profesionales where Usuario_ID=?", (userID,))
+        rows = c.fetchall()
+        rowCount = len(rows)
+        conn.commit()
+
+        if rowCount == 0:
+            return {"error": 0, "status": {"isProfessional": False, "matricula": -1}}
+            
+        '''objects_list = []
+        for row in rows:
+            d = collections.OrderedDict()
+            d['isProfessional'] = True
+            objects_list.append(d)'''
+        
+        d = collections.OrderedDict()
+        d['Matricula'] = rows[0]
+
+        matricula = rows[0][0]
+
+        return { "error": 0, "status": {"isProfessional": True, "matricula": matricula }}
+
+    except Exception as e:
+        print('Error: ', str(e))
+        return {"error": 2, "status": str(e)}
+
+def isClient(userID):
+    try:
+        conn = sqlite3.connect(DB_PATH)
+        c = conn.cursor()
+        c.execute("select Cod_Paciente from Pacientes where Usuario_ID=?", (userID,))
+        rows = c.fetchall()
+        rowCount = len(rows)
+        conn.commit()
+
+        if rowCount == 0:
+            return {"error": 0, "status": {"isClient": False, "codPaciente": -1}}
+            
+        '''objects_list = []
+        for row in rows:
+            d = collections.OrderedDict()
+            d['isProfessional'] = True
+            objects_list.append(d)'''
+        
+        #d = collections.OrderedDict()
+        #d['Matricula'] = rows[0]
+
+        codPaciente = rows[0][0]
+
+        return { "error": 0, "status": {"isClient": True, "codPaciente": codPaciente }}
+
     except Exception as e:
         print('Error: ', str(e))
         return {"error": 2, "status": str(e)}

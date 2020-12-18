@@ -2,6 +2,7 @@
     import moment  from 'moment';
     import 'moment/locale/es';
     import { onMount } from 'svelte';
+    import { idGlobal, matricula } from './../location.js';
   
     var valorcito = "";
 
@@ -9,19 +10,27 @@
 
     onMount (
         async () => {
-            getTurnos(1);
+            console.log("ID Global: " + $idGlobal);
+
+			if ($idGlobal == 0) {
+				navigate("/", { replace: true });
+
+            } else {
+                getTurnos(matricula);
+            }
+            
             //loadCalendar();
         }
     )
 
     async function getTurnos(clientID) {
-        const response = await fetch("http://localhost:5000/events/getClientPendingEvents?clientID=" + clientID.toString())
-
-        const turnos = await response.json();
+        //const response = await fetch("http://localhost:5000/events/getClientPendingEvents?clientID=" + clientID.toString())
+        const response = await fetch("http://localhost:5000/events/getProfessionalsClinics?professionalID=" + professionalID.toString());
+        const clinicas = await response.json();
 
         //myTodo = todo.items
         
-        console.log(turnos)
+        console.log(clinicas)
 
         
         var plantilla = ""
@@ -30,7 +39,11 @@
         
 
         if (turnos.error == 0) {
-            for (let index = 0; index < turnos.status.length; index++) {
+            /*for (let index = 0; index < clinicas.status.length; index++) {
+                
+            }*/
+
+            /*for (let index = 0; index < turnos.status.length; index++) {
                 eventos[index] = [];
                 eventos[index] = {
                     //Profesional, Clinica, Descripcion, Fecha_Turno, Titulo
@@ -47,7 +60,7 @@
                 
 
                 
-            }
+            }*/
             //console.log(eventos)
         } else {
             /*plantilla = "Hola ";*/

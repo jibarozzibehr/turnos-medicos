@@ -483,6 +483,60 @@ def get_professionals_clinics():
     response = Response(json.dumps(status), status=200, mimetype='application/json')
     return response
 
+#Comprueba email y contraseña y devuelve el ID del usuario.
+@app.route('/events/login', methods=['GET'])
+def login():
+    email = request.args.get('email')
+    password = request.args.get('password')
+
+    # Get items from the helper
+    status = helper.login(email, password)
+
+    # Return 404 if item not found
+    if status is None:
+        respuesta = {"error":"Hubo un error."}
+        response = Response(json.dumps(respuesta), status=404 , mimetype='application/json')
+        return response
+
+    response = Response(json.dumps(status), status=200, mimetype='application/json')
+    return response
+
+#Comprueba si un usuario es médico o no. Si es, devuelve su ID.
+#Error = 1 si no es médico.
+@app.route('/events/isProfessional', methods=['GET'])
+def isProfessional():
+    userID = request.args.get('userID')
+
+    # Get items from the helper
+    status = helper.isProfessional(userID)
+
+    # Return 404 if item not found
+    if status is None:
+        respuesta = {"error":"Hubo un error."}
+        response = Response(json.dumps(respuesta), status=404 , mimetype='application/json')
+        return response
+
+    response = Response(json.dumps(status), status=200, mimetype='application/json')
+    return response
+
+#si arriba false, consultar acá el Cod_Paciente del cliente
+#isPaciente
+@app.route('/events/isClient', methods=['GET'])
+def isClient():
+    userID = request.args.get('userID')
+
+    # Get items from the helper
+    status = helper.isClient(userID)
+
+    # Return 404 if item not found
+    if status is None:
+        respuesta = {"error":"Hubo un error."}
+        response = Response(json.dumps(respuesta), status=404 , mimetype='application/json')
+        return response
+
+    response = Response(json.dumps(status), status=200, mimetype='application/json')
+    return response
+
     
 
 if __name__ == '__main__':    

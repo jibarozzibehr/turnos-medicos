@@ -2,19 +2,31 @@
     import moment  from 'moment';
     import 'moment/locale/es';
     import { onMount } from 'svelte';
+    import { idGlobal, codCliente } from './../location.js';
+
+    import { link, navigate } from 'svelte-routing';
   
     var valorcito = "";
-    var CodClienteLog = 1;
+    var CodClienteLog = $codCliente;
     
 
     onMount (
         async () => {
-            getTurnos(CodClienteLog);
+			console.log("ID Global: " + $idGlobal);
+
+			if ($idGlobal == 0) {
+				navigate("/", { replace: true });
+
+            } else {
+                getTurnos(CodClienteLog);
+            }
+            
             //loadCalendar();
         }
     )
 
     async function getTurnos(clientID) {
+        console.log("Este es el cod cliente actual: " + CodClienteLog)
         const response = await fetch("http://localhost:5000/events/getClientPendingEvents?clientID=" + clientID.toString())
 
         const turnos = await response.json();
@@ -388,6 +400,7 @@
         if (json.error == 0) {
             window.$("#exampleModal").hide();
             location.reload();
+            //navigate("/misturnos", { replace: true });
             console.log("Success");
         } else {
             console.log("Error");
@@ -479,6 +492,10 @@
         const json = await res.json();
 
         console.log(json);
+
+        window.$("#addTurnoModal").hide();
+        location.reload();
+        //navigate("/misturnos", { replace: true });
         
     }
     
@@ -634,6 +651,28 @@
 
 
 </script>
+
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light">	
+
+    <div class="container">
+        <a class="navbar-brand" href="/">Turnos</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+            <div id="navBar" class="navbar-nav ml-auto">
+
+                <a href="/" use:link class="nav-item nav-link">Home</a>
+                <a href="/misturnos" use:link class="nav-item nav-link">Mis turnos</a>
+                <a href="/logout" use:link class="nav-item nav-link">Cerrar sesión</a>
+
+            </div>
+        </div>
+    </div>
+
+</nav>
+
 
 <br>
 <h1>Mis turnos</h1>
