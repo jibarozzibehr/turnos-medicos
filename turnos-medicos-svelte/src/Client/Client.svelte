@@ -405,8 +405,9 @@
         console.log(json.error);
 
         if (json.error == 0) {
-            window.$("#exampleModal").hide();
-            location.reload();
+            window.$("#exampleModal").modal('hide');
+            getTurnos($codCliente);
+            //location.reload();
             //navigate("/misturnos", { replace: true });
             console.log("Success");
         } else {
@@ -500,8 +501,9 @@
 
         console.log(json);
 
-        window.$("#addTurnoModal").hide();
-        location.reload();
+        window.$("#addTurnoModal").modal('hide');
+        getTurnos($codCliente);
+        //location.reload();
         //navigate("/misturnos", { replace: true });
         
     }
@@ -519,6 +521,7 @@
 
         const horarios = await response.json();
         
+        console.log("horarios");
         console.log(horarios);
 
         var FechaInicio = window.$("#Fechaa").val() + " 00:00";
@@ -534,6 +537,7 @@
         })
 
         const turnos = await response2.json();
+        console.log("turnos");
         console.log(turnos);
         //console.log("bbbbbbbbbbbbb");
        // console.log(moment(window.$("#Fechaa").val() +" "+ (horarios.status[0].Horario_Fin)));

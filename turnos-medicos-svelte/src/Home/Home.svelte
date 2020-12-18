@@ -37,7 +37,7 @@
             moment.locale('es');
             var fecha = moment(fechaHora).format('LL');
             console.log(fecha);
-            var hora = moment(fechaHora).format('hh:mm');
+            var hora = moment(fechaHora).format('HH:mm');
             console.log(hora);
             
             plantilla = '<h2 class="text-left">Su próximo turno es:</h2>'

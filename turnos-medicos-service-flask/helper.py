@@ -251,7 +251,7 @@ def get_professional_day_events(data):
         conn = sqlite3.connect(DB_PATH)
         c = conn.cursor()
         
-        c.execute('select * from Turnos where Clinica_ID=? AND Profesional_Matricula=? AND Fecha_Turno <= ? AND Fecha_Turno >= ? Order by Fecha_Turno',(clinicID,professionalID,finishDate,beginDate))
+        c.execute('select * from Turnos where Cancelado = 0 AND Finalizado = 0 AND Clinica_ID=? AND Profesional_Matricula=? AND Fecha_Turno <= ? AND Fecha_Turno >= ? Order by Fecha_Turno',(clinicID,professionalID,finishDate,beginDate))
 
         rows = c.fetchall()
         rowCount = len(rows)
