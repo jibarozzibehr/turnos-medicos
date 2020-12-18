@@ -18,7 +18,7 @@
 				navigate("/", { replace: true });
 
             } else {
-                getTurnos(CodClienteLog);
+                getTurnos($codCliente);
             }
             
             //loadCalendar();
