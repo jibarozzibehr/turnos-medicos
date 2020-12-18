@@ -2,12 +2,12 @@
     import moment  from 'moment';
     import 'moment/locale/es';
     import { onMount } from 'svelte';
-    import { idGlobal, codCliente } from './../location.js';
+    import { idGlobal, matricula } from './../location.js';
 
     import { link, navigate } from 'svelte-routing';
   
     var valorcito = "";
-    var CodClienteLog = $codCliente;
+    var CodClienteLog = $matricula;
     
 
     onMount (
@@ -15,19 +15,21 @@
 			console.log("ID Global: " + $idGlobal);
 
 			if ($idGlobal == 0) {
-				navigate("/", { replace: true });
+				navigate("/login", { replace: true });
 
             } else {
-                getTurnos($codCliente);
+                getTurnos($matricula);
             }
             
             //loadCalendar();
         }
     )
 
-    async function getTurnos(clientID) {
+    async function getTurnos(professionalID) {
         console.log("Este es el cod cliente actual: " + CodClienteLog)
-        const response = await fetch("http://localhost:5000/events/getClientPendingEvents?clientID=" + clientID.toString())
+        const response = await fetch("http://localhost:5000/events/getProfessionalEvents?professionalID="+professionalID.toString())
+        
+
 
         const turnos = await response.json();
 
@@ -406,7 +408,7 @@
 
         if (json.error == 0) {
             window.$("#exampleModal").modal('hide');
-            getTurnos($codCliente);
+            getTurnos($matricula);
             //location.reload();
             //navigate("/misturnos", { replace: true });
             console.log("Success");
@@ -502,7 +504,7 @@
         console.log(json);
 
         window.$("#addTurnoModal").modal('hide');
-        getTurnos($codCliente);
+        getTurnos($matricula);
         //location.reload();
         //navigate("/misturnos", { replace: true });
         

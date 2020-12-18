@@ -170,15 +170,40 @@ def get_client_events():
 
 
 
-#Obtiene todos los turnos de un profesional
+#Obtiene todos los turnos de un profesional en una clinica
 @app.route('/events/getProfessionalEvents', methods=['GET'])
 def get_professional_events():
+    professionalID = request.args.get('professionalID')
+
+
+    # Get items from the helper
+    status = helper.get_professional_events(professionalID)
+
+    # Return 404 if item not found
+    if status is None:
+        respuesta = {"error":"Professional not found (professionalID = " + str(professionalID) + ")."}
+        response = Response(json.dumps(respuesta), status=404 , mimetype='application/json')
+        return response
+
+    # Return status
+    """res_data = {
+        'status': status
+    }"""
+
+    response = Response(json.dumps(status), status=200, mimetype='application/json')
+    return response
+
+
+
+#Obtiene todos los turnos de un profesional en una clinica
+@app.route('/events/getProfessionalEventsByClinic', methods=['GET'])
+def get_professional_events_byClinic():
     clinicID = request.args.get('clinicID')
     professionalID = request.args.get('professionalID')
 
 
     # Get items from the helper
-    status = helper.get_professional_events(clinicID,professionalID)
+    status = helper.get_professional_events_byClinic(clinicID,professionalID)
 
     # Return 404 if item not found
     if status is None:

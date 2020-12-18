@@ -170,7 +170,49 @@ def finalize_event(data):
 
 
 
-def get_professional_events(clinicID,professionalID):
+def get_professional_events(professionalID):
+    try:
+        conn = sqlite3.connect(DB_PATH)
+        c = conn.cursor()
+        c.execute("select * from Turnos where Profesional_Matricula=? AND Cancelado = 0 AND Finalizado = 0 AND Fecha_Turno >= datetime('now', 'localtime') order by Turnos.Fecha_Turno asc", (professionalID,))
+        rows = c.fetchall()
+        rowCount = len(rows)
+        conn.commit()
+
+        if rowCount == 0:
+            return {"error": 1, "status": "There are no events"}
+            
+        objects_list = []
+        for row in rows:
+            d = collections.OrderedDict()
+            d['ID'] = row[0]
+            d['Clinica_ID'] = row[1]
+            d['Profesional_Matricula'] = row[2]
+            d['Cod_Paciente'] = row[3]
+            d['Practica_ID'] = row[4]
+            d['Fecha_Reserva'] = row[5]
+            d['Fecha_Turno'] = row[6]
+            d['Notificado'] = row[7]
+            d['Cancelado'] = row[8]
+            d['Finalizado'] = row[9]
+            d['Titulo'] = row[10]
+            d['Descripcion'] = row[11]
+            objects_list.append(d)
+        return {"error": 0, "status": objects_list}
+    except Exception as e:
+        print('Error: ', str(e))
+        return {"error": 2, "status": str(e)}
+
+
+
+
+
+
+
+
+
+
+def get_professional_events_byClinic(clinicID,professionalID):
     try:
         conn = sqlite3.connect(DB_PATH)
         c = conn.cursor()

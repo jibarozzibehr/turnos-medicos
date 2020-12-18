@@ -1,14 +1,19 @@
 <script>
     import moment  from 'moment';
     import 'moment/locale/es';
-    import { codCliente, idGlobal } from './../location.js';
+    import { codCliente, idGlobal,medico} from './../location.js';
     import { link, navigate } from 'svelte-routing';
     import { onMount } from 'svelte';
 
     onMount (
         async () => {
             if ($idGlobal != 0) {
-                getTurnos($codCliente);
+                if($medico == "true"){
+                    navigate("/profesional", { replace: false });
+                }else{
+                    getTurnos($codCliente);
+                }
+                
             } else {
                 navigate("/login", { replace: false });
             }
