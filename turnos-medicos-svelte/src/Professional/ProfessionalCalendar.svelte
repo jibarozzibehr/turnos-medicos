@@ -708,7 +708,6 @@
 
 </script>
 
-
 <nav class="navbar navbar-expand-lg navbar-light bg-light">	
 
     <div class="container">
@@ -731,7 +730,7 @@
 
 
 <br>
-<h1>Mis turnos</h1>
+<h1 class="titulo">Mis turnos</h1>
 
 
 
@@ -859,5 +858,9 @@
 
     .centrado {
         text-align: left !important;
+    }
+
+    .titulo {
+        text-align: center;
     }
 </style>

@@ -130,7 +130,6 @@
 
         if (userData.error == 0) {
             //Se cargan los datos y se muestra el modal
-            console.log("Entra" + userData.status.nombre);
             window.$("#editNombre").val(userData.status.nombre);
             window.$("#editDNI").val(userData.status.dni);
             window.$("#editEmail").val(userData.status.email);
@@ -145,10 +144,10 @@
 
 
     async function editUsuario() {
-        var nombreInput = window.$("editNombre").val;
-        var dniInput = window.$("editDNI").val;
-        var emailInput = window.$("editEmail").val;
-        var telefonoInput = window.$("editTelefono").val;
+        var nombreInput = window.$("#editNombre").val();
+        var dniInput = window.$("#editDNI").val();
+        var emailInput = window.$("#editEmail").val();
+        var telefonoInput = window.$("#editTelefono").val();
 
         let data = {
             userID: Number($idGlobal),
@@ -158,7 +157,7 @@
             telefono: Number(telefonoInput),
         };
 
-        console.log("Esta es la data: " + data);
+        console.log("Esta es la data: " + JSON.stringify(data));
         const res = await fetch("http://localhost:5000/events/editUser", {
             method: 'PUT',
             headers: { 'Content-Type' : 'application/json;charset=utf-8' },
@@ -167,15 +166,12 @@
 
         const json = await res.json()
         //let result = JSON.stringify(json)
-        
-        console.log(json);
-        console.log(json.error);
 
         if (json.error == 0) {
             window.$("#editUserModal").modal('hide');
             console.log("Success");
         } else {
-            console.log("Error");
+            window.$("#userDescription").html("<p>No se pudieron editar los datos.</p>")
         }
 
     }

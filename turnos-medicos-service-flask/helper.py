@@ -759,10 +759,10 @@ def get_user_data(userID):
 def edit_user(data):
     try:
         userID = data[0]
-        email = data[0]
-        nombre = data[0]
-        dni = data[0]
-        telefono = data[0]
+        nombre = data[1]
+        dni = data[2]
+        email = data[3]
+        telefono = data[4]
 
         conn = sqlite3.connect(DB_PATH)
         c = conn.cursor()

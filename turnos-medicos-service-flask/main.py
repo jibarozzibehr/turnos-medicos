@@ -618,7 +618,7 @@ def editUser():
     email = req_data['email']
     telefono = req_data['telefono']
 
-    data = [userID, email, nombre, dni, telefono]
+    data = [userID, nombre, dni, email, telefono]
 
     
 
