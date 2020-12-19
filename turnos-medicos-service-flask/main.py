@@ -591,10 +591,50 @@ def isClient():
     response = Response(json.dumps(status), status=200, mimetype='application/json')
     return response
 
+#Trae los datos de un usuario
+@app.route('/events/getUserData', methods=['GET'])
+def get_user_data():
+    userID = request.args.get('userID')
+
+    # Get items from the helper
+    status = helper.get_user_data(userID)
+
+    # Return 404 if item not found
+    if status is None:
+        respuesta = {"error":"Hubo un error."}
+        response = Response(json.dumps(respuesta), status=404 , mimetype='application/json')
+        return response
+
+    response = Response(json.dumps(status), status=200, mimetype='application/json')
+    return response
+
+#Modifica un usuario
+@app.route('/events/editUser', methods=['PUT'])
+def editUser():
+    req_data = request.get_json()
+    userID = req_data['userID']
+    email = req_data['email']
+    nombre = req_data['nombre']
+    dni = req_data['dni']
+    telefono = req_data['telefono']
+
+    data = [userID, email, nombre, dni, telefono]
+
+    
+
+    # Add item to the list
+    res_data = helper.edit_user(data)
+
+    # Return error if item not added
+    if res_data is None:
+        response = Response("{'error': 'User not modified - ID: " + userID + "'}", status=500 , mimetype='application/json')
+        return response
+
+    # Return response
+    response = Response(json.dumps(res_data), mimetype='application/json')
+
+    return response
     
 
 if __name__ == '__main__':    
     app.run(debug=True, use_reloader=True)
-
-
-

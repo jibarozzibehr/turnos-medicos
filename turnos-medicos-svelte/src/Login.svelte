@@ -1,6 +1,6 @@
 <script>
     //import { getContext } from 'svelte';
-    import { idGlobal, medico, codCliente, matricula } from './location.js';
+    import { idGlobal, medico, codCliente, matricula, especialidadID } from './location.js';
     import { navigate } from 'svelte-routing';
     import { onMount } from 'svelte';
 
@@ -33,6 +33,7 @@
             if ($medico == "true") {
                 //Cambiar Matricula
                 matricula.set(user2.status.matricula)
+                especialidadID.set(user2.status.especialidadID)
                 navigate("/profesional", { replace: true });
             } else {
                 //Consultar y cambiar codCliente

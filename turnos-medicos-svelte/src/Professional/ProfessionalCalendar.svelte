@@ -2,13 +2,13 @@
     import moment  from 'moment';
     import 'moment/locale/es';
     import { onMount } from 'svelte';
-    import { idGlobal, matricula } from './../location.js';
+    import { idGlobal, matricula, especialidadID, medico } from './../location.js';
 
     import { link, navigate } from 'svelte-routing';
   
     var valorcito = "";
     var CodClienteLog = $matricula;
-    var especialidadLog = 1;
+    var especialidadLog = $especialidadID;
     
 
     onMount (
@@ -18,6 +18,8 @@
 			if ($idGlobal == 0) {
 				navigate("/login", { replace: true });
 
+            } else if ($medico == "false") {
+                navigate("/misturnos", { replace: true });
             } else {
                 getTurnos($matricula);
             }
@@ -717,8 +719,8 @@
         <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
             <div id="navBar" class="navbar-nav ml-auto">
 
-                <a href="/" use:link class="nav-item nav-link">Home</a>
-                <a href="/misturnos" use:link class="nav-item nav-link">Mis turnos</a>
+                <a href="/profesional" use:link class="nav-item nav-link">Home</a>
+                <a href="/turnosprofesional" use:link class="nav-item nav-link">Mis turnos</a>
                 <a href="/logout" use:link class="nav-item nav-link">Cerrar sesión</a>
 
             </div>

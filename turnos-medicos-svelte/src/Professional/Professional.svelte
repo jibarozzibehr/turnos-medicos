@@ -119,7 +119,73 @@
     
     //}
 
+    async function getUsuario() {
+        const response = await fetch("http://localhost:5000/events/getUserData?userID=" + $idGlobal);
+
+        const userData = await response.json();
+        
+        console.log("Lo que devuelve status: " + JSON.stringify(userData.status))
+
+        console.log("Error del getUserData: " + userData.error);
+
+        if (userData.error == 0) {
+            //Se cargan los datos y se muestra el modal
+            console.log("Entra" + userData.status.nombre);
+            window.$("#editNombre").val(userData.status.nombre);
+            window.$("#editDNI").val(userData.status.dni);
+            window.$("#editEmail").val(userData.status.email);
+            window.$("#editTelefono").val(userData.status.telefono);
+
+            window.$("#editUserModal").modal();
+        } else {
+
+        }
+    }
+
+
+
+    async function editUsuario() {
+        var nombreInput = window.$("").val;
+
+        let data = {
+            userID: Number($idGlobal),
+            nombre: ,
+            dni: Number(),
+            email: ,
+            telefono: Number(),
+        };
+        console.log("Esta es la data: " + data);
+        const res = await fetch("http://localhost:5000/events/deleteEvent", {
+            method: 'PUT',
+            headers: { 'Content-Type' : 'application/json;charset=utf-8' },
+            body: JSON.stringify(data)
+        })
+
+        const json = await res.json()
+        //let result = JSON.stringify(json)
+        
+        console.log(json);
+        console.log(json.error);
+
+        if (json.error == 0) {
+            window.$("#exampleModal").modal('hide');
+            getTurnos($codCliente);
+            //location.reload();
+            //navigate("/misturnos", { replace: true });
+            console.log("Success");
+        } else {
+            console.log("Error");
+        }
+
+    }
+
 </script>
+
+<style>
+    .titulo {
+        text-align: center;
+    }
+</style>
 
 <nav class="navbar navbar-expand-lg navbar-light bg-light">	
     <div class="container">
@@ -140,17 +206,24 @@
 </nav>
 
 <div class="container">
-        <!--<div id="navBar"></div>-->
+    <!--<div id="navBar"></div>-->
         
 
 
 
-        <br>
-        <h1>Home</h1>
-        <br>
-        
-        <div id="clinicasTurnos" class="row">
-        </div>
+    <br>
+    <!--Arreglar esto!!!-->
+    <div class="text-center">
+        <h1 class="titulo text-center">Home</h1>
+        <button type="button" class="btn btn-primary" on:click={() => getUsuario()}>Mis datos</button>
+    </div>
+    
+    <br>
+    
+    <div id="clinicasTurnos" class="row">
+    </div>
+
+    
 
         <!--<div class="row">
             <div id="turno1" class="alert alert-primary col-md-5" style="margin: auto;">Turno1</div>
@@ -160,4 +233,48 @@
         </div>-->
         
 
+</div>
+
+<div class="modal fade" id="editUserModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Editar mis datos</h5>
+                <button type="button" class="close" data-dismiss="modal">
+                </button>
+            </div>
+            
+
+            <div class="modal-body" id="userDescription">
+                <div class="form-group">
+                    <label for="editNombre">Nombre y Apellido</label>
+                    <input type="text" class="form-control" placeholder="Nombre y Apellido" id="editNombre">
+                </div>
+
+                <div class="form-group">
+                    <label for="editDNI">DNI</label>
+                    <input type="number" class="form-control" placeholder="DNI" id="editDNI">
+                    <small id="editDNIHelp" class="form-text text-muted">Sólo números.</small>
+                </div>   
+                
+                <div class="form-group">
+                    <label for="editEmail">Email</label>
+                    <input type="text" class="form-control" placeholder="Email" id="editEmail">
+                </div>
+                    
+                <div class="form-group">
+                    <label for="editTelefono">Teléfono</label>
+                    <input type="number" class="form-control" placeholder="Teléfono" id="editTelefono">
+                    <small id="editTelefonoHelp" class="form-text text-muted">Sólo números.</small>
+                </div>
+            </div>
+
+            
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success" on:click={() => editUsuario()}>Guardar cambios</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                
+            </div>
+        </div>
+    </div>
 </div>

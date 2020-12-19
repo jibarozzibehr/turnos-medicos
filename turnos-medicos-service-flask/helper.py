@@ -665,13 +665,13 @@ def isProfessional(userID):
     try:
         conn = sqlite3.connect(DB_PATH)
         c = conn.cursor()
-        c.execute("select Matricula from Profesionales where Usuario_ID=?", (userID,))
+        c.execute("select Matricula, Especialidad_ID from Profesionales where Usuario_ID=?", (userID,))
         rows = c.fetchall()
         rowCount = len(rows)
         conn.commit()
 
         if rowCount == 0:
-            return {"error": 0, "status": {"isProfessional": False, "matricula": -1}}
+            return {"error": 0, "status": {"isProfessional": False, "matricula": -1, "especialidadID": -1}}
             
         '''objects_list = []
         for row in rows:
@@ -679,12 +679,14 @@ def isProfessional(userID):
             d['isProfessional'] = True
             objects_list.append(d)'''
         
-        d = collections.OrderedDict()
-        d['Matricula'] = rows[0]
+        # d = collections.OrderedDict()
+        # d['Matricula'] = rows[0]
+        # d['Especialidad_ID'] = rows[1]
 
         matricula = rows[0][0]
+        especialidadID = rows[0][1]
 
-        return { "error": 0, "status": {"isProfessional": True, "matricula": matricula }}
+        return { "error": 0, "status": {"isProfessional": True, "matricula": matricula, "especialidadID": especialidadID}}
 
     except Exception as e:
         print('Error: ', str(e))
@@ -715,6 +717,67 @@ def isClient(userID):
 
         return { "error": 0, "status": {"isClient": True, "codPaciente": codPaciente }}
 
+    except Exception as e:
+        print('Error: ', str(e))
+        return {"error": 2, "status": str(e)}
+
+def get_user_data(userID):
+    try:
+        conn = sqlite3.connect(DB_PATH)
+        c = conn.cursor()
+        c.execute("select * from Usuarios where ID=?", (userID,))
+        rows = c.fetchall()
+        rowCount = len(rows)
+        
+
+        if rowCount == 0:
+            return {"error": 1, "status": "The user with ID " + str(userID) + " doesn't exist."}
+            
+        '''objects_list = []
+        for row in rows:
+            d = collections.OrderedDict()
+            d['isProfessional'] = True
+            objects_list.append(d)'''
+        
+        data = []
+
+        d = collections.OrderedDict()
+
+        d['email'] = rows[0][1]
+        d['nombre'] = rows[0][3]
+        d['dni'] = rows[0][4]
+        d['telefono'] = rows[0][5]
+
+        data.append(d)
+
+        return { "error": 0, "status": d }
+
+    except Exception as e:
+        print('Error: ', str(e))
+        return {"error": 2, "status": str(e)}
+
+def edit_user(data):
+    try:
+        userID = data[0]
+        email = data[0]
+        nombre = data[0]
+        dni = data[0]
+        telefono = data[0]
+
+        conn = sqlite3.connect(DB_PATH)
+        c = conn.cursor()
+
+        
+        c.execute('update Usuarios set Email=?, Nombre=?, DNI=?, Telefono=? where id=?', (email, nombre, dni, telefono, userID))
+        
+
+        rowCount = c.rowcount
+        conn.commit()
+
+        if rowCount == 0:   #Si no se afecto ninguna fila, es porque el usuario no existe.
+            return {"error": 1, "status": "El usuario con ID " + str(userID) + " no existe."}
+        else:
+            return {"error": 0, "status": "Success"}
     except Exception as e:
         print('Error: ', str(e))
         return {"error": 2, "status": str(e)}

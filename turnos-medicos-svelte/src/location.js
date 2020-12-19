@@ -18,5 +18,9 @@ medico.subscribe(val => localStorage.setItem("medico", val));
 export const codCliente = writable(localStorage.getItem("codCliente") || "0");
 codCliente.subscribe(val => localStorage.setItem("codCliente", val));
 
-export const matricula = writable(localStorage.getItem("matricula") || 0);
+export const matricula = writable(localStorage.getItem("matricula") || "0");
 matricula.subscribe(val => localStorage.setItem("matricula", val));
+
+export const especialidadID = writable(localStorage.getItem("especialidadID") || "0");
+especialidadID.subscribe(val => localStorage.setItem("especialidadID", val));
+

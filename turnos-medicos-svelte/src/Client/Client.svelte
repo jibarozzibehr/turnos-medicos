@@ -694,114 +694,117 @@
 <div id='calendar'></div>
 
 <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">""</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="centrado">
-        <div class="modal-body" id="eventDescription">
-            <input type="hidden" id="turnoID" bind:value={valorcito}>
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">""</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="centrado">
+                <div class="modal-body" id="eventDescription">
+                    <input type="hidden" id="turnoID" bind:value={valorcito}>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" on:click={() => cancelarTurno()}>Cancelar turno</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                
+            </div>
         </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-danger" on:click={() => cancelarTurno()}>Cancelar turno</button>
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-        
-      </div>
     </div>
-  </div>
 </div>
 
 <div class="modal fade " id="addTurnoModal" tabindex="-1" role="dialog">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Añadir nuevo turno</h5>
-        <button type="button" class="close" data-dismiss="modal">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="centrado">
-        <div class="modal-body" id="eventDescription">
-
-            <div id="divEspecialidades" class="form-group form-row align-items-end">
-                <label class="col-md-12" for="Especialidades">Especialidad</label>
-                <select name="Especialidades" id="Especialidades" class="form-control" on:change={() => {listarPracticas(); listarAll();}} data-toggle="tooltip" data-placement="left" title="Debe seleccionar una especialidad">
-                </select>
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Añadir nuevo turno</h5>
+                <button type="button" class="close" data-dismiss="modal">
+                    <span aria-hidden="true">&times;</span>
+                </button>
             </div>
+            <div class="centrado">
+                <div class="modal-body" id="eventDescription">
 
-            <div id="divPracticas" class="form-group form-row align-items-end">
-                <label class="col-md-12" for="Practicas"> Práctica</label>
-                <select name="Practicas" id="Practicas" class="form-control" data-toggle="tooltip" data-placement="left" title="Debe seleccionar una practica">
-                </select>
-            </div>
+                    <div id="divEspecialidades" class="form-group form-row align-items-end">
+                        <label class="col-md-12" for="Especialidades">Especialidad</label>
+                        <select name="Especialidades" id="Especialidades" class="form-control" on:change={() => {listarPracticas(); listarAll();}} data-toggle="tooltip" data-placement="left" title="Debe seleccionar una especialidad">
+                        </select>
+                    </div>
 
-            <div id="divClinicas" class="form-group form-row align-items-end">
-                <label class="col-md-12" for="Clinicas"> Clínica</label>
-                <select name="Clinicas" id="Clinicas" class="form-control" on:change={() => {listarAll();}} data-toggle="tooltip" data-placement="left" title="Debe seleccionar una clinica">
-                </select>
-            </div>
+                    <div id="divPracticas" class="form-group form-row align-items-end">
+                        <label class="col-md-12" for="Practicas"> Práctica</label>
+                        <select name="Practicas" id="Practicas" class="form-control" data-toggle="tooltip" data-placement="left" title="Debe seleccionar una practica">
+                        </select>
+                    </div>
 
-            <div id="divProfesionales" class="form-group form-row align-items-end">
-                <label class="col-md-12" for="Profesionales">Profesional</label>
-                <select name="Profesionales" id="Profesionales" class="form-control" on:change={() => {listarHorarios();}} data-toggle="tooltip" data-placement="left" title="Debe seleccionar un profesional">
-                </select>
-            </div>
-            <div id="divFecha" class="form-group form-row align-items-end">
-                <label class="col-md-4" for="DiaTurno">Fecha del turno:</label> 
-                <p class="col-md-8" id="DiaTurno" name="DiaTurno"></p>
-                <!--<input type="date" class="form-control" id="DiaTurno" name="DiaTurno" placeholder="DD/MM/YYY" disabled> -->
-            </div>
+                    <div id="divClinicas" class="form-group form-row align-items-end">
+                        <label class="col-md-12" for="Clinicas"> Clínica</label>
+                        <select name="Clinicas" id="Clinicas" class="form-control" on:change={() => {listarAll();}} data-toggle="tooltip" data-placement="left" title="Debe seleccionar una clinica">
+                        </select>
+                    </div>
 
-            <div id="divDiaa" class="form-group form-row align-items-end" hidden>
-                <label class="col-md-4" for="Dias">Dia:</label> 
-                <input type="text" id="Diaa">
-                <input type="text" id="Fechaa">
-                <!--<input type="date" class="form-control" id="DiaTurno" name="Dias" placeholder="DD/MM/YYY" disabled> -->
-            </div>
-
-            <div id="divHorarios" class="form-group form-row align-items-end">
-                <label class="col-md-12" for="Horarios"> Horario</label>
-                <select name="Horarios" id="Horarios" class="form-control" data-toggle="tooltip" data-placement="left" title="Debe seleccionar un horario">
-                </select>
-            </div>
-
-
-            <div id="divTitulo" class="form-group form-row align-items-end">
-                <label class="col-md-4" for="Titulo">Razón de su visita:</label> 
-                <input type="text" class="form-control" id="Titulo" name="Titulo" placeholder="Razón" data-toggle="tooltip" data-placement="left" title="Debe detallar una razon para su visita">
-            </div>
-
-            <div id="divDescripcion" class="form-group form-row align-items-end">
-                <label class="col-md-4" for="Descripcion">Descipción</label> 
-                <textarea class="form-control" id="Descripcion" name="Descripcion" rows="3" placeholder="Describa brevemente sus síntomas"></textarea>
-            </div>
-
-
-            
-            
-
-        </div>
-      </div>
-      <div class="modal-footer">
-        <div id="divBotones1">
-            <button id="BotonSiguiente" type="button" class="btn btn-primary" on:click={() => siguientePaso()}>Siguiente</button>
-            <button id ="BotonCancelar1" type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-        </div>
-        <div id="divBotones2">
-            <button type="button" class="btn btn-secondary" on:click={() => volver()}>Volver</button>
-            <button id="addTurno" type="button" class="btn btn-success" on:click={() => agregarTurno()}>Agregar</button>
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-            
-        </div>
+                    <div id="divProfesionales" class="form-group form-row align-items-end">
+                        <label class="col-md-12" for="Profesionales">Profesional</label>
+                        <select name="Profesionales" id="Profesionales" class="form-control" on:change={() => {listarHorarios();}} data-toggle="tooltip" data-placement="left" title="Debe seleccionar un profesional">
+                        </select>
+                    </div>
         
-      </div>
+                    <div id="divFecha" class="form-group form-row align-items-end">
+                        <label class="col-md-4" for="DiaTurno">Fecha del turno:</label> 
+                        <p class="col-md-8" id="DiaTurno" name="DiaTurno"></p>
+                        <!--<input type="date" class="form-control" id="DiaTurno" name="DiaTurno" placeholder="DD/MM/YYY" disabled> -->
+                    </div>
+
+                    <div id="divDiaa" class="form-group form-row align-items-end" hidden>
+                        <label class="col-md-4" for="Dias">Dia:</label> 
+                        <input type="text" id="Diaa">
+                        <input type="text" id="Fechaa">
+                        <!--<input type="date" class="form-control" id="DiaTurno" name="Dias" placeholder="DD/MM/YYY" disabled> -->
+                    </div>
+
+                    <div id="divHorarios" class="form-group form-row align-items-end">
+                        <label class="col-md-12" for="Horarios"> Horario</label>
+                        <select name="Horarios" id="Horarios" class="form-control" data-toggle="tooltip" data-placement="left" title="Debe seleccionar un horario">
+                        </select>
+                    </div>
+
+
+                    <div id="divTitulo" class="form-group form-row align-items-end">
+                        <label class="col-md-4" for="Titulo">Razón de su visita:</label> 
+                        <input type="text" class="form-control" id="Titulo" name="Titulo" placeholder="Razón" data-toggle="tooltip" data-placement="left" title="Debe detallar una razon para su visita">
+                    </div>
+
+                    <div id="divDescripcion" class="form-group form-row align-items-end">
+                        <label class="col-md-4" for="Descripcion">Descipción</label> 
+                        <textarea class="form-control" id="Descripcion" name="Descripcion" rows="3" placeholder="Describa brevemente sus síntomas"></textarea>
+                    </div>
+
+
+        
+        
+
+                </div>
+            </div>
+            
+            <div class="modal-footer">
+                <div id="divBotones1">
+                    <button id="BotonSiguiente" type="button" class="btn btn-primary" on:click={() => siguientePaso()}>Siguiente</button>
+                    <button id ="BotonCancelar1" type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                </div>
+                
+                <div id="divBotones2">
+                    <button type="button" class="btn btn-secondary" on:click={() => volver()}>Volver</button>
+                    <button id="addTurno" type="button" class="btn btn-success" on:click={() => agregarTurno()}>Agregar</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+        
+                </div>
+    
+            </div>
+        </div>
     </div>
-  </div>
 </div>
 
 

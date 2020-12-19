@@ -1,7 +1,7 @@
 <script>
     import moment  from 'moment';
     import 'moment/locale/es';
-    import { codCliente, idGlobal,medico} from './../location.js';
+    import { codCliente, idGlobal, medico} from './../location.js';
     import { link, navigate } from 'svelte-routing';
     import { onMount } from 'svelte';
 
