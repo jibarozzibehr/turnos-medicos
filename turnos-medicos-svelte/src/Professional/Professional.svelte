@@ -145,17 +145,21 @@
 
 
     async function editUsuario() {
-        var nombreInput = window.$("").val;
+        var nombreInput = window.$("editNombre").val;
+        var dniInput = window.$("editDNI").val;
+        var emailInput = window.$("editEmail").val;
+        var telefonoInput = window.$("editTelefono").val;
 
-        let data = {
+        var data = {
             userID: Number($idGlobal),
-            nombre: ,
-            dni: Number(),
-            email: ,
-            telefono: Number(),
+            nombre: nombreInput,
+            dni: Number(dniInput),
+            email: emailInput,
+            telefono: Number(telefonoInput),
         };
+
         console.log("Esta es la data: " + data);
-        const res = await fetch("http://localhost:5000/events/deleteEvent", {
+        const res = await fetch("http://localhost:5000/events/editUser", {
             method: 'PUT',
             headers: { 'Content-Type' : 'application/json;charset=utf-8' },
             body: JSON.stringify(data)
@@ -168,10 +172,7 @@
         console.log(json.error);
 
         if (json.error == 0) {
-            window.$("#exampleModal").modal('hide');
-            getTurnos($codCliente);
-            //location.reload();
-            //navigate("/misturnos", { replace: true });
+            window.$("#editUserModal").modal('hide');
             console.log("Success");
         } else {
             console.log("Error");

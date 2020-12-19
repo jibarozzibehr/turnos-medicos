@@ -613,9 +613,9 @@ def get_user_data():
 def editUser():
     req_data = request.get_json()
     userID = req_data['userID']
-    email = req_data['email']
     nombre = req_data['nombre']
     dni = req_data['dni']
+    email = req_data['email']
     telefono = req_data['telefono']
 
     data = [userID, email, nombre, dni, telefono]
