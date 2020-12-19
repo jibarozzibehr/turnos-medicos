@@ -150,7 +150,7 @@
         var emailInput = window.$("editEmail").val;
         var telefonoInput = window.$("editTelefono").val;
 
-        var data = {
+        let data = {
             userID: Number($idGlobal),
             nombre: nombreInput,
             dni: Number(dniInput),
