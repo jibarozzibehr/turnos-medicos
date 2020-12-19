@@ -438,6 +438,35 @@ def get_professionals():
     response = Response(json.dumps(status), status=200, mimetype='application/json')
     return response
 
+
+
+
+
+    #Obtiene todos los pacintes
+@app.route('/events/getClients', methods=['GET'])
+def get_clients():
+
+    # Get items from the helper
+    status = helper.get_clients()
+
+    # Return 404 if item not found
+    if status is None:
+        respuesta = {"error":"Hubo un error."}
+        response = Response(json.dumps(respuesta), status=404 , mimetype='application/json')
+        return response
+
+    # Return status
+    """res_data = {
+        'status': status
+    }"""
+
+    response = Response(json.dumps(status), status=200, mimetype='application/json')
+    return response
+
+
+
+
+
 #Obtiene todos los profesionales por especialidad
 @app.route('/events/getProfessionalsBySpecialities', methods=['GET'])
 def get_professionals_by_specialities():

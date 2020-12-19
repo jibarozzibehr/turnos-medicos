@@ -8,6 +8,7 @@
   
     var valorcito = "";
     var CodClienteLog = $matricula;
+    var especialidadLog = 1;
     
 
     onMount (
@@ -38,7 +39,7 @@
         console.log(turnos)
 
         
-        var plantilla = ""
+       // var plantilla = ""
 
         var eventos = [];
         
@@ -50,7 +51,7 @@
                     //Profesional, Clinica, Descripcion, Fecha_Turno, Titulo
                     title: turnos.status[index].Titulo,
                     start: turnos.status[index].Fecha_Turno,
-                    professional: turnos.status[index].Profesional,
+                    client: turnos.status[index].Paciente,
                     clinica: turnos.status[index].Clinica,
                     description: turnos.status[index].Descripcion,
                     turnoID: turnos.status[index].ID
@@ -72,7 +73,7 @@
         loadCalendar(eventos);
     }
 
-    async function listarEspecialidades() {
+    /*async function listarEspecialidades() {
         const response = await fetch("http://localhost:5000/events/getSpecialities")
 
         const especialidades = await response.json();
@@ -101,10 +102,10 @@
         window.$("#Profesionales").prop("disabled", true);
         window.$("#Horarios").prop("disabled", true);
     }
-
+*/
 
     async function listarClinicas() {
-        const response = await fetch("http://localhost:5000/events/getClinics")
+        const response = await fetch("http://localhost:5000/events/getProfessionalsClinics?professionalID="+$matricula.toString())
 
         const clinicas = await response.json();
         
@@ -126,16 +127,20 @@
             x.options.add(c);
             //console.log(c);
         }
-        window.$("#Practicas").empty();
-        window.$("#Profesionales").empty();
-        window.$("#Practicas").prop("disabled", true);
-        window.$("#Profesionales").prop("disabled", true);
+        window.$("#Horarios").empty();
+        var x2 = document.getElementById("Horarios");
+        var c2 = document.createElement("option");
+        c2.text = "Seleccione una clinica";
+        c2.selected = true;
+        c2.hidden = true;
+        c2.value = 0;
+        x2.options.add(c2);               
         window.$("#Horarios").prop("disabled", true);
     }
 
     async function listarPracticas() {
         //console.log("Este es el valor de especialidad!! " + window.$("#Especialidades").val());
-        const response = await fetch("http://localhost:5000/events/getPracticesBySpecialities?specialityID=" + window.$("#Especialidades").val())
+        const response = await fetch("http://localhost:5000/events/getPracticesBySpecialities?specialityID=" + especialidadLog)
 
         const practicas = await response.json();
         
@@ -178,7 +183,7 @@
 
         
     }
-
+/*
     async function listarProfesionales() {
         //console.log("Este es el valor de especialidad!! " + window.$("#Especialidades").val());
         const response = await fetch("http://localhost:5000/events/getProfessionalsBySpecialities?specialityID=" + window.$("#Especialidades").val())
@@ -204,11 +209,11 @@
             c.selected = true;
             c.hidden = true;
             c.value = 0;
-            x.options.add(c);
+            x.options.add(c);*/
             /*console.log(c);
             console.log(profesionales);
             console.log(profesionales.status.length);*/
-            var cantidad = 0;
+           /* var cantidad = 0;
             for (var i = 0; i < profesionales.status.length; i++) {
 
                 let data = { clinicID : window.$("#Clinicas").val(),professionalID : profesionales.status[i].Matricula ,date: Number(window.$("#Diaa").val()) };
@@ -263,15 +268,15 @@
         
     }
 
+*/
 
-
-    function listarAll(){
+   /* function listarAll(){
         if(window.$("#Especialidades").val()!=0 && window.$("#Clinicas").val()!=0){
             listarProfesionales();
             //console.log(moment().format('YYYY-MM-DD HH:MM'));
         }
     }
-
+*/
 
     
 
@@ -295,8 +300,11 @@
                 
                 window.$("#Descripcion").val("");
 
-                listarEspecialidades();     //Pide datos y llena el select.
+                //listarEspecialidades();     //Pide datos y llena el select.
                 listarClinicas();
+                listarPracticas();
+                
+                listarClientes();
 
                 
                 window.$("#DiaTurno").html(moment(info.dateStr).format('DD/MM/YYYY'));
@@ -357,7 +365,8 @@
                 window.$(".modal-title").css("color: 'red' !important;");
 
                 var plantilla = "<p><strong>Fecha:</strong> " + dia + " a las " + hora + "  </p>"
-                plantilla += "<p><strong>Profesional:</strong> " + info.event.extendedProps.professional + " </p>"
+                plantilla += "<p><strong>Clinica:</strong> " + info.event.extendedProps.clinica + " </p>"
+                plantilla += "<p><strong>Paciente:</strong> " + info.event.extendedProps.client + " </p>"
                 plantilla += "<p><strong>Descripción:</strong> " + info.event.extendedProps.description + " </p>"
 
                 window.$("#eventDescription").html(plantilla);
@@ -388,13 +397,13 @@
         
     }*/
 
-    async function cancelarTurno() {
+    async function FinalizarTurno() {
         var turnoID = valorcito;
         console.log("Este es el ID del turno: " + turnoID);
 
         let data = { appointmentID : Number(turnoID) };
         console.log("Esta es la data: " + data);
-        const res = await fetch("http://localhost:5000/events/deleteEvent", {
+        const res = await fetch("http://localhost:5000/events/finalizeEvent", {
             method: 'PUT',
             headers: { 'Content-Type' : 'application/json;charset=utf-8' },
             body: JSON.stringify(data)
@@ -423,31 +432,30 @@
     function siguientePaso(){
         //alert("To Do!");
 
-        if (window.$("#Especialidades").val()==0) {
-            window.$('#Especialidades').tooltip('show');
+        if (window.$("#Clinicas").val()==0) {
+            window.$('#Clinicas').tooltip('show');
             return;
         }
         if (window.$("#Practicas").val()==0) {
             window.$('#Practicas').tooltip('show');
             return;
         }
-        if (window.$("#Clinicas").val()==0) {
-            window.$('#Clinicas').tooltip('show');
+
+        if (window.$("#Clientes").val()==0) {
+            window.$('#Clientes').tooltip('show');
             return;
         }
-        if (window.$("#Profesionales").val()==0) {
-            window.$('#Profesionales').tooltip('show');
-            return;
-        }
+
         if (window.$("#Horarios").val()==0) {
             window.$('#Horarios').tooltip('show');
             return;
         }
 
-        window.$("#divEspecialidades").hide();
+        //window.$("#divEspecialidades").hide();
         window.$("#divPracticas").hide();
         window.$("#divClinicas").hide();
-        window.$("#divProfesionales").hide();
+        window.$("#divClientes").hide();
+        //window.$("#divProfesionales").hide();
         window.$("#divFecha").hide();
         window.$("#divBotones1").hide();
         window.$("#divTitulo").show();
@@ -460,10 +468,11 @@
     function volver(){
         //alert("To Do!");
         
-        window.$("#divEspecialidades").show();
+       // window.$("#divEspecialidades").show();
         window.$("#divPracticas").show();
         window.$("#divClinicas").show();
-        window.$("#divProfesionales").show();
+        window.$("#divClientes").show();
+       // window.$("#divProfesionales").show();
         window.$("#divFecha").show();
         window.$("#divBotones1").show();
         window.$("#divTitulo").hide();
@@ -481,8 +490,8 @@
 
         let data = { 
             clinicID : window.$("#Clinicas").val(), 
-            professionalID : window.$("#Profesionales").val(), 
-            codClient: CodClienteLog, 
+            professionalID : Number($matricula), 
+            codClient: window.$("#Clientes").val(), 
             practiceID: window.$("#Practicas").val(), 
             reservationDate: moment().format("YYYY-MM-DD HH:mm"),
             appointmentDay: window.$("#Fechaa").val() + " " + window.$("#Horarios").val(),
@@ -511,9 +520,11 @@
     }
     
     async function listarHorarios() {
+
+
         console.log("a aaaa aaa");
         //console.log("Este es el valor de especialidad!! " + window.$("#Especialidades").val());
-        let data = { clinicID : window.$("#Clinicas").val(),professionalID : window.$("#Profesionales").val(),date: Number(window.$("#Diaa").val()) };
+        let data = { clinicID : window.$("#Clinicas").val(),professionalID : Number($matricula),date: Number(window.$("#Diaa").val()) };
         console.log(data);
         const response = await fetch("http://localhost:5000/events/getProfessionalDaySchedule", {
             method: 'POST',
@@ -529,7 +540,7 @@
         var FechaInicio = window.$("#Fechaa").val() + " 00:00";
         var FechaFin = window.$("#Fechaa").val()+ " 23:59";
 
-        let data2 = { clinicID : window.$("#Clinicas").val(),professionalID : window.$("#Profesionales").val(),beginDate: FechaInicio, finishDate: FechaFin};
+        let data2 = { clinicID : window.$("#Clinicas").val(),professionalID : Number($matricula),beginDate: FechaInicio, finishDate: FechaFin};
         console.log(data2);
 
         const response2 = await fetch("http://localhost:5000/events/getProfessionalDayEvents", {
@@ -543,14 +554,6 @@
         console.log(turnos);
         //console.log("bbbbbbbbbbbbb");
        // console.log(moment(window.$("#Fechaa").val() +" "+ (horarios.status[0].Horario_Fin)));
-
-
-            if(window.$("#Profesionales").val() == 0){
-                console.log("a verrrrrrrrrrrrrrr");
-                window.$("#Horarios").empty();
-                window.$("#Horarios").prop("disabled", true);
-                return;
-            }
 
        var x = document.getElementById("Horarios");
         var c = document.createElement("option");
@@ -627,6 +630,14 @@
             window.$("#Horarios").prop("disabled", false);
            
 
+       }else{
+            window.$("#Horarios").empty();
+            c.text = "Usted no tiene horarios disponibles este dia en esta clinica.";
+            c.selected = true;
+            c.hidden = true;
+            c.value = 0;
+            x.options.add(c);               
+            window.$("#Horarios").prop("disabled", true);
        }
 
         //var status = moment(myDate).add(5, 'hours').format('YYYY-MM-DD hh:mm:ss');
@@ -638,15 +649,45 @@
 
 
 
+    async function listarClientes() {
+        const response = await fetch("http://localhost:5000/events/getClients")
+
+        const clientes = await response.json();
+        console.log("Clientessss")
+        console.log(clientes)
+        
+        window.$("#Clientes").empty();
+
+        var x = document.getElementById("Clientes");
+        var c = document.createElement("option");
+        c.text = "Seleccione un paciente";
+        x.options.add(c);
+        c.selected = true;
+        c.hidden = true;
+        c.value = 0;
+        x.options.add(c);
+        //console.log(c);
+        for (var i = 0; i < clientes.status.length; i++) {
+            c = document.createElement("option");
+            c.text = clientes.status[i].Nombre;
+            c.value = clientes.status[i].Cod_Paciente;
+            x.options.add(c);
+            //console.log(c);
+        }
+    }
+
+
+
 
     window.$(document).on('click', function (e) {
 
 
     if (!window.$("#BotonSiguiente").is(e.target)) {
-       window.$('#Especialidades').tooltip('hide');
+       //window.$('#Especialidades').tooltip('hide');
        window.$('#Practicas').tooltip('hide');
        window.$('#Clinicas').tooltip('hide');
-       window.$('#Profesionales').tooltip('hide');
+       window.$('#Clientes').tooltip('hide');
+       //window.$('#Profesionales').tooltip('hide');
        window.$('#Horarios').tooltip('hide');
     }
     if (!window.$("#addTurno").is(e.target)) {
@@ -710,7 +751,7 @@
         </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-danger" on:click={() => cancelarTurno()}>Cancelar turno</button>
+        <button type="button" class="btn btn-danger" on:click={() => FinalizarTurno()}>Finalizar turno</button>
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
         
       </div>
@@ -730,11 +771,13 @@
       <div class="centrado">
         <div class="modal-body" id="eventDescription">
 
-            <div id="divEspecialidades" class="form-group form-row align-items-end">
-                <label class="col-md-12" for="Especialidades">Especialidad</label>
-                <select name="Especialidades" id="Especialidades" class="form-control" on:change={() => {listarPracticas(); listarAll();}} data-toggle="tooltip" data-placement="left" title="Debe seleccionar una especialidad">
+            <div id="divClinicas" class="form-group form-row align-items-end">
+                <label class="col-md-12" for="Clinicas"> Clínica</label>
+                <select name="Clinicas" id="Clinicas" class="form-control" on:change={() => {listarHorarios();}} data-toggle="tooltip" data-placement="left" title="Debe seleccionar una clinica">
                 </select>
             </div>
+
+                
 
             <div id="divPracticas" class="form-group form-row align-items-end">
                 <label class="col-md-12" for="Practicas"> Práctica</label>
@@ -742,17 +785,12 @@
                 </select>
             </div>
 
-            <div id="divClinicas" class="form-group form-row align-items-end">
-                <label class="col-md-12" for="Clinicas"> Clínica</label>
-                <select name="Clinicas" id="Clinicas" class="form-control" on:change={() => {listarAll();}} data-toggle="tooltip" data-placement="left" title="Debe seleccionar una clinica">
+            <div id="divClientes" class="form-group form-row align-items-end">
+                <label class="col-md-12" for="Clientes"> Cliente</label>
+                <select name="Clientes" id="Clientes" class="form-control"  data-toggle="tooltip" data-placement="left" title="Debe seleccionar una clinica">
                 </select>
             </div>
 
-            <div id="divProfesionales" class="form-group form-row align-items-end">
-                <label class="col-md-12" for="Profesionales">Profesional</label>
-                <select name="Profesionales" id="Profesionales" class="form-control" on:change={() => {listarHorarios();}} data-toggle="tooltip" data-placement="left" title="Debe seleccionar un profesional">
-                </select>
-            </div>
             <div id="divFecha" class="form-group form-row align-items-end">
                 <label class="col-md-4" for="DiaTurno">Fecha del turno:</label> 
                 <p class="col-md-8" id="DiaTurno" name="DiaTurno"></p>

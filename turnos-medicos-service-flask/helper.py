@@ -174,7 +174,8 @@ def get_professional_events(professionalID):
     try:
         conn = sqlite3.connect(DB_PATH)
         c = conn.cursor()
-        c.execute("select * from Turnos where Profesional_Matricula=? AND Cancelado = 0 AND Finalizado = 0 AND Fecha_Turno >= datetime('now', 'localtime') order by Turnos.Fecha_Turno asc", (professionalID,))
+        c.execute("select Turnos.ID, Turnos.Clinica_ID, Turnos.Profesional_Matricula, Turnos.Cod_Paciente, Turnos.Practica_ID, Turnos.Fecha_Reserva, Turnos.Fecha_Turno, Turnos.Notificado, Turnos.Cancelado, Turnos.Finalizado, Turnos.Titulo, Turnos.Descripcion, Usuarios.Nombre, Clinicas.Nombre from Turnos, Pacientes, Usuarios, Clinicas where Turnos.Profesional_Matricula=? AND Turnos.Cancelado = 0 AND Turnos.Finalizado = 0 AND Turnos.Fecha_Turno >= datetime('now', 'localtime') AND Turnos.Cod_Paciente = Pacientes.Cod_Paciente AND Turnos.Clinica_ID = Clinicas.ID AND Pacientes.Usuario_ID = Usuarios.ID order by Turnos.Fecha_Turno asc", (professionalID,))
+        
         rows = c.fetchall()
         rowCount = len(rows)
         conn.commit()
@@ -197,6 +198,9 @@ def get_professional_events(professionalID):
             d['Finalizado'] = row[9]
             d['Titulo'] = row[10]
             d['Descripcion'] = row[11]
+            
+            d['Paciente'] = row[12]
+            d['Clinica'] = row[13]
             objects_list.append(d)
         return {"error": 0, "status": objects_list}
     except Exception as e:
@@ -519,6 +523,38 @@ def get_professionals():
     except Exception as e:
         print('Error: ', str(e))
         return {"error": 2, "status": str(e)}
+
+
+
+
+def get_clients():
+    try:
+        conn = sqlite3.connect(DB_PATH)
+        c = conn.cursor()
+        c.execute("select Pacientes.Cod_Paciente, Pacientes.Usuario_ID, Usuarios.Nombre, Usuarios.DNI, Usuarios.Telefono, Usuarios.Email from Pacientes, Usuarios where Pacientes.Usuario_ID = Usuarios.ID")
+        rows = c.fetchall()
+        rowCount = len(rows)
+        conn.commit()
+
+        if rowCount == 0:
+            return {"error": 1, "status": "There are no clients."}
+            
+        objects_list = []
+        for row in rows:
+            d = collections.OrderedDict()
+            d['Cod_Paciente'] = row[0]
+            d['Usuario_ID'] = row[1]
+            d['Nombre'] = row[2]
+            d['DNI'] = row[3]
+            d['Telefono'] = row[4]
+            d['Email'] = row[5]
+            objects_list.append(d)
+        return {"error": 0, "status": objects_list}
+    except Exception as e:
+        print('Error: ', str(e))
+        return {"error": 2, "status": str(e)}
+
+
 
 def get_professionals_by_specialities(specialityID):
     try:
