@@ -240,3 +240,306 @@ def test_get_client_events_Bad():
 
 
 
+
+
+def test_get_professional_day_events_Well():
+
+    clinicID = 1
+    professionalID = "123456"
+    beginDate = "2020-12-26 00:00"
+    finishDate = "2020-12-26 23:59"
+    data = [clinicID,professionalID,beginDate,finishDate]
+
+
+    assert json.loads(json.dumps(helper.get_professional_day_events(data)))["error"] == 0
+
+
+def test_get_professional_day_events_Bad():
+
+    clinicID = 1
+    professionalID = "123456"
+    beginDate = "2020-11-18 00:00"
+    finishDate = "2020-11-18 23:59"
+    data = [clinicID,professionalID,beginDate,finishDate]
+
+
+    assert json.loads(json.dumps(helper.get_professional_day_events(data)))["error"] == 1
+
+
+
+def test_get_professional_schedule_Well():
+
+    clinicID = 1
+    professionalID = "1"
+
+
+    assert json.loads(json.dumps(helper.get_professional_schedule(clinicID,professionalID)))["error"] == 0
+
+
+def test_get_professional_schedule_Bad():
+
+    clinicID = 1
+    professionalID ="123"
+
+
+    assert json.loads(json.dumps(helper.get_professional_schedule(clinicID,professionalID)))["error"] == 1
+
+
+
+def test_get_professional_schedule_Bad2():
+
+    clinicID = 12
+    professionalID ="1"
+
+
+    assert json.loads(json.dumps(helper.get_professional_schedule(clinicID,professionalID)))["error"] == 1
+
+
+
+def test_get_professional_day_schedule_Well():
+
+    clinicID = 1
+    professionalID = "1"
+    date = 1
+    data = [clinicID,professionalID,date]
+
+
+    assert json.loads(json.dumps(helper.get_professional_day_schedule(data)))["error"] == 0
+
+
+def test_get_professional_day_schedule_Bad():
+
+    clinicID = 1
+    professionalID = "1"
+    date = 4
+    data = [clinicID,professionalID,date]
+
+
+    assert json.loads(json.dumps(helper.get_professional_day_schedule(data)))["error"] == 1
+
+
+
+    
+def test_get_client_pending_events_Well():
+
+    clientID = 1
+
+
+    assert json.loads(json.dumps(helper.get_client_pending_events(clientID)))["error"] == 0
+
+
+def test_get_client_pending_events_Bad():
+
+    clientID = 3
+
+
+    assert json.loads(json.dumps(helper.get_client_pending_events(clientID)))["error"] == 1
+
+
+
+def test_get_specialities_Well():
+
+    assert json.loads(json.dumps(helper.get_specialities()))["error"] == 0
+
+
+def test_get_practices_Well():
+
+    assert json.loads(json.dumps(helper.get_practices()))["error"] == 0
+
+
+
+
+
+    
+def test_get_practices_by_specialities_Well():
+
+    specialityID = 3
+
+
+    assert json.loads(json.dumps(helper.get_practices_by_specialities(specialityID)))["error"] == 0
+
+
+def test_get_practices_by_specialities_Bad():
+
+    specialityID = 2
+
+
+    assert json.loads(json.dumps(helper.get_practices_by_specialities(specialityID)))["error"] == 1
+
+
+def test_get_professionals_Well():
+
+    assert json.loads(json.dumps(helper.get_professionals()))["error"] == 0
+
+
+def test_get_clients_Well():
+
+    assert json.loads(json.dumps(helper.get_clients()))["error"] == 0
+
+
+
+def test_get_professionals_by_specialities_Well():
+
+    specialityID = 3
+
+
+    assert json.loads(json.dumps(helper.get_professionals_by_specialities(specialityID)))["error"] == 0
+
+
+def test_get_professionals_by_specialities_Bad():
+
+    specialityID = 2
+
+
+    assert json.loads(json.dumps(helper.get_professionals_by_specialities(specialityID)))["error"] == 1
+
+
+
+def test_get_clinics_Well():
+
+    assert json.loads(json.dumps(helper.get_clinics()))["error"] == 0
+
+
+
+def test_get_professionals_clinics_Well():
+
+    professionalID = "1"
+
+
+    assert json.loads(json.dumps(helper.get_professionals_clinics(professionalID)))["error"] == 0
+
+
+def test_get_professionals_clinics_Bad():
+
+    professionalID = "9874"
+
+
+    assert json.loads(json.dumps(helper.get_professionals_clinics(professionalID)))["error"] == 1
+
+
+
+
+def test_login_Well():
+
+    email = "dios@gmail.com"
+    password = "admin"
+
+
+    assert json.loads(json.dumps(helper.login(email, password)))["error"] == 0
+
+
+def test_login_Bad():
+
+    email = "dios@gmail.com"
+    password = "entrar"
+
+
+    assert json.loads(json.dumps(helper.login(email, password)))["error"] == 1
+
+
+
+def test_login_Bad2():
+
+    email = "jesus@gmail.com"
+    password = "admin"
+
+
+    assert json.loads(json.dumps(helper.login(email, password)))["error"] == 1
+
+
+
+
+def test_isProfessional_Well():
+
+    userID = 3
+
+    error = json.loads(json.dumps(helper.isProfessional(userID)))["error"]
+    isProf = json.loads(json.dumps(helper.isProfessional(userID)))["status"]["isProfessional"]
+
+    assert  error == 0 
+
+    assert  isProf == True
+
+
+def test_isProfessional_Bad():
+
+    userID = 1
+
+    error = json.loads(json.dumps(helper.isProfessional(userID)))["error"]
+    isProf = json.loads(json.dumps(helper.isProfessional(userID)))["status"]["isProfessional"]
+
+    assert  error == 0 
+
+    assert  isProf == False
+
+
+def test_isClient_Well():
+
+    userID = 1
+
+    error = json.loads(json.dumps(helper.isClient(userID)))["error"]
+    isClient = json.loads(json.dumps(helper.isClient(userID)))["status"]["isClient"]
+
+    assert  error == 0 
+
+    assert  isClient == True
+
+
+def test_isClient_Bad():
+
+    userID = 3
+
+    error = json.loads(json.dumps(helper.isClient(userID)))["error"]
+    isClient = json.loads(json.dumps(helper.isClient(userID)))["status"]["isClient"]
+
+    assert  error == 0 
+
+    assert  isClient == False
+
+
+
+
+def test_get_user_data_Well():
+
+    userID = 1
+
+
+    assert json.loads(json.dumps(helper.get_user_data(userID)))["error"] == 0
+
+
+def test_get_user_data_Bad():
+
+    userID = 1235
+
+
+    assert json.loads(json.dumps(helper.get_user_data(userID)))["error"] == 1
+
+
+
+def test_edit_user_Well():
+
+    userID = 1
+    nombre = "Butros Asis"
+    dni = "41695105"
+    email = "butros.asis@gmail.com"
+    telefono = "3548431878"
+
+    data = [userID, nombre, dni, email, telefono]
+
+
+    assert json.loads(json.dumps(helper.edit_user(data)))["error"] == 0
+
+
+def test_edit_user_Bad():
+
+    userID = 1222
+    nombre = "Butros"
+    dni = "41695105"
+    email = "butros.asis@gmail.com"
+    telefono = "3548431878"
+
+    data = [userID, nombre, dni, email, telefono]
+
+
+    assert json.loads(json.dumps(helper.edit_user(data)))["error"] == 1
+
