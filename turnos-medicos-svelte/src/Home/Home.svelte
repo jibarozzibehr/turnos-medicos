@@ -143,14 +143,26 @@
     </div>
 
 </nav>
+<style>
+    .titulo {
+        text-align: center;
+    }
+</style>
 
 <div class="container">
     <br>
-    <div class="text-center">
-        <h1 class="titulo text-center">Home</h1>
-        <button type="button" class="btn btn-primary" on:click={() => getUsuario()}>Mis datos</button>
+    <div class="row">
+        <div class="col-md-4"></div>
+        <div class="col-md-4">
+            <h1 class="titulo">Home</h1>
+        </div>
+        <div class="col-md-4">
+            <button type="button" class="btn btn-primary float-right" style="margin: 10px 5px 0 0;" on:click={() => getUsuario()}>Mis datos</button>
+        </div>
     </div>
     <br>
+
+
     <!--<h2 class="text-left">Su próximo turno es:</h2>-->
     <div id="proximoTurno" class="alert alert-primary col-md-6"> 
     </div>
