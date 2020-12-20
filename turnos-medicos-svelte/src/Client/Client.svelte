@@ -686,7 +686,10 @@
 
 
 <br>
-<h1>Mis turnos</h1>
+<div class="text-center">
+    <h1 class="titulo text-center">Mis turnos</h1>
+</div>
+<br>
 
 
 
