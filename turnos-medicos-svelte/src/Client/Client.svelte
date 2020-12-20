@@ -616,11 +616,21 @@
             console.log(practicas.status.length);*/
 
             for (var i = 0; i < arrayHorarios.length; i++) {
-                c = document.createElement("option");
-                c.text = arrayHorarios[i];
-                c.value = arrayHorarios[i];
-                x.options.add(c);
-                console.log(c);
+                if((moment().format('YYYY-MM-DD') != moment(window.$("#Fechaa").val()).format('YYYY-MM-DD'))){
+                    c = document.createElement("option");
+                    c.text = arrayHorarios[i];
+                    c.value = arrayHorarios[i];
+                    x.options.add(c);
+                    console.log(c);
+                }else{
+                    if(moment().format("HH:mm")<arrayHorarios[i]){
+                        c = document.createElement("option");
+                        c.text = arrayHorarios[i];
+                        c.value = arrayHorarios[i];
+                        x.options.add(c);
+                        console.log(c);
+                    }
+                }
             }
             window.$("#Horarios").prop("disabled", false);
            
