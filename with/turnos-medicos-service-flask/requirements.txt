@@ -1,0 +1,10 @@
+click==7.1.2
+Flask==1.1.2
+itsdangerous==1.1.0
+Jinja2==2.11.2
+MarkupSafe==1.1.1
+mysql-connector==2.2.9
+Werkzeug==1.0.1
+Flasgger==0.9.5
+Pytest==6.2.1
+flask_cors

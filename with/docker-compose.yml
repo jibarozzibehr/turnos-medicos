@@ -1,0 +1,38 @@
+version: "2"
+
+services:
+  app:
+    build: ./turnos-medicos-service-flask
+    depends_on:
+      - db
+    ports:
+      - 8830:5000 #8830 - localhost del host, 5000 del container
+    environment: 
+      NAME_HELLO: Juan
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: username
+      MYSQL_PASSWORD: password
+
+  app2:
+    build: ./turnos-medicos-svelte
+    depends_on:
+      - db
+    ports:
+      - 8831:5000 #8830 - localhost del host, 5000 del container
+    environment: 
+      NAME_HELLO: Juan
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: username
+      MYSQL_PASSWORD: password
+
+
+
+  db:
+    image: mysql:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: username
+      MYSQL_PASSWORD: password
+    volumes:
+      - ./turnos-medicos-service-flask:/docker-entrypoint-initdb.d/:ro
+      - ./../data:/var/lib/mysql
