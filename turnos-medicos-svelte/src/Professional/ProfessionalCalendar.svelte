@@ -644,6 +644,63 @@
            
 
        }else{
+        window.$("#Horarios").empty();
+            if(horarios.error ==0 ){
+                var arrayHorarios = []
+                var inicio = moment(window.$("#Fechaa").val() +" "+ (horarios.status[0].Horario_Inicio));
+                var fin = moment(window.$("#Fechaa").val() +" "+ (horarios.status[0].Horario_Fin));
+                var actual = inicio;
+                var pos = 0;
+
+                while(actual < fin ){
+                    //console.log("22222222222222");
+                    //console.log(actual)
+                    //console.log(actual.format("HH:mm"));
+                    arrayHorarios[pos] = actual.format("HH:mm");
+                    pos++;
+                    actual = actual.add(1, 'hours');
+                }
+
+
+               // console.log("a ver");
+                c.text = "Seleccione un horario";
+
+                x.options.add(c);
+                c.selected = true;
+                c.hidden = true;
+                c.value = 0;
+                x.options.add(c);
+                /*console.log(c);
+                console.log(practicas);
+                console.log(practicas.status.length);*/
+
+                for (var i = 0; i < arrayHorarios.length; i++) {
+                    if((moment().format('YYYY-MM-DD') != moment(window.$("#Fechaa").val()).format('YYYY-MM-DD'))){
+                        c = document.createElement("option");
+                        c.text = arrayHorarios[i];
+                        c.value = arrayHorarios[i];
+                        x.options.add(c);
+                        console.log(c);
+                    }else{
+                        if(moment().format("HH:mm")<arrayHorarios[i]){
+                            c = document.createElement("option");
+                            c.text = arrayHorarios[i];
+                            c.value = arrayHorarios[i];
+                            x.options.add(c);
+                            console.log(c);
+                        }
+                    }
+                
+                }
+                window.$("#Horarios").prop("disabled", false);
+
+
+                return;
+            }
+
+
+
+
             window.$("#Horarios").empty();
             c.text = "Usted no tiene horarios disponibles este dia en esta clinica.";
             c.selected = true;
