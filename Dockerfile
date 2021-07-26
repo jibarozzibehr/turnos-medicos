@@ -1,5 +1,5 @@
 #Imagen base
-FROM python:2.7-slim 
+FROM python:3.6 
 
 #Redirigimos al directorio app
 WORKDIR /app
