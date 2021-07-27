@@ -17,7 +17,6 @@ app.config['SWAGGER'] = {
 swagger = Swagger(app)
 
 
-
 #Agrega un nuevo turno a la db
 @app.route('/events/new', methods=['POST'])
 def add_event():
