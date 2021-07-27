@@ -1,0 +1,29 @@
+version: '3'
+
+services:
+  turnos-medicos-service-flask:
+    build:  turnos-medicos-service-flask
+    command: ["flask", "run", "--host=0.0.0.0"]
+    volumes:
+      - ./turnos-medicos-service-flask:/backend
+    environment:
+      - FLASK_ENV=development
+      - FLASK_APP=main.py
+    ports:
+      - "5000:5000"
+
+  turnos-medicos-svelte:
+    build: turnos-medicos-svelte
+    command: ["npm", "start"]
+    volumes:
+      - ./turnos-medicos-svelte:/frontend
+      - node-modules:/frontend/node_modules
+    environment:
+      - NODE_ENV=development
+    ports:
+      - '3000:3000'
+    depends_on:
+      - api
+
+volumes:
+  node-modules:
