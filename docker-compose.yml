@@ -20,6 +20,7 @@ services:
       - node-modules:/frontend/node_modules
     environment:
       - NODE_ENV=development
+      - localhost=turnos-medicos-service-flask
     ports:
       - '3000:5000'
     depends_on:
