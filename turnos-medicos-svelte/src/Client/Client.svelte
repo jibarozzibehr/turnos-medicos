@@ -9,6 +9,8 @@
     var valorcito = "";
     var CodClienteLog = $codCliente;
     
+    const HOST = process.env.HOST || "localhost";
+
 
     onMount (
         async () => {
@@ -27,7 +29,7 @@
 
     async function getTurnos(clientID) {
         console.log("Este es el cod cliente actual: " + CodClienteLog)
-        const response = await fetch("http://localhost:5000/events/getClientPendingEvents?clientID=" + clientID.toString())
+        const response = await fetch("http://"+HOST+":5000/events/getClientPendingEvents?clientID=" + clientID.toString())
 
         const turnos = await response.json();
 
@@ -71,7 +73,7 @@
     }
 
     async function listarEspecialidades() {
-        const response = await fetch("http://localhost:5000/events/getSpecialities")
+        const response = await fetch("http://"+HOST+":5000/events/getSpecialities")
 
         const especialidades = await response.json();
         
@@ -102,7 +104,7 @@
 
 
     async function listarClinicas() {
-        const response = await fetch("http://localhost:5000/events/getClinics")
+        const response = await fetch("http://"+HOST+":5000/events/getClinics")
 
         const clinicas = await response.json();
         
@@ -133,7 +135,7 @@
 
     async function listarPracticas() {
         //console.log("Este es el valor de especialidad!! " + window.$("#Especialidades").val());
-        const response = await fetch("http://localhost:5000/events/getPracticesBySpecialities?specialityID=" + window.$("#Especialidades").val())
+        const response = await fetch("http://"+HOST+":5000/events/getPracticesBySpecialities?specialityID=" + window.$("#Especialidades").val())
 
         const practicas = await response.json();
         
@@ -179,7 +181,7 @@
 
     async function listarProfesionales() {
         //console.log("Este es el valor de especialidad!! " + window.$("#Especialidades").val());
-        const response = await fetch("http://localhost:5000/events/getProfessionalsBySpecialities?specialityID=" + window.$("#Especialidades").val())
+        const response = await fetch("http://"+HOST+":5000/events/getProfessionalsBySpecialities?specialityID=" + window.$("#Especialidades").val())
 
         const profesionales = await response.json();
         
@@ -211,7 +213,7 @@
 
                 let data = { clinicID : window.$("#Clinicas").val(),professionalID : profesionales.status[i].Matricula ,date: Number(window.$("#Diaa").val()) };
                 console.log(data);
-                const response = await fetch("http://localhost:5000/events/getProfessionalDaySchedule", {
+                const response = await fetch("http://"+HOST+":5000/events/getProfessionalDaySchedule", {
                     method: 'POST',
                     headers: { 'Content-Type' : 'application/json;charset=utf-8' },
                     body: JSON.stringify(data)
@@ -392,7 +394,7 @@
 
         let data = { appointmentID : Number(turnoID) };
         console.log("Esta es la data: " + data);
-        const res = await fetch("http://localhost:5000/events/deleteEvent", {
+        const res = await fetch("http://"+HOST+":5000/events/deleteEvent", {
             method: 'PUT',
             headers: { 'Content-Type' : 'application/json;charset=utf-8' },
             body: JSON.stringify(data)
@@ -491,7 +493,7 @@
             description : window.$("#Descripcion").val()
     };
         console.log("Esta es la data: " + data);
-        const res = await fetch("http://localhost:5000/events/new", {
+        const res = await fetch("http://"+HOST+":5000/events/new", {
             method: 'POST',
             headers: { 'Content-Type' : 'application/json;charset=utf-8' },
             body: JSON.stringify(data)
@@ -513,7 +515,7 @@
         //console.log("Este es el valor de especialidad!! " + window.$("#Especialidades").val());
         let data = { clinicID : window.$("#Clinicas").val(),professionalID : window.$("#Profesionales").val(),date: Number(window.$("#Diaa").val()) };
         console.log(data);
-        const response = await fetch("http://localhost:5000/events/getProfessionalDaySchedule", {
+        const response = await fetch("http://"+HOST+":5000/events/getProfessionalDaySchedule", {
             method: 'POST',
             headers: { 'Content-Type' : 'application/json;charset=utf-8' },
             body: JSON.stringify(data)
@@ -530,7 +532,7 @@
         let data2 = { clinicID : window.$("#Clinicas").val(),professionalID : window.$("#Profesionales").val(),beginDate: FechaInicio, finishDate: FechaFin};
         console.log(data2);
 
-        const response2 = await fetch("http://localhost:5000/events/getProfessionalDayEvents", {
+        const response2 = await fetch("http://"+HOST+":5000/events/getProfessionalDayEvents", {
             method: 'POST',
             headers: { 'Content-Type' : 'application/json;charset=utf-8' },
             body: JSON.stringify(data2)

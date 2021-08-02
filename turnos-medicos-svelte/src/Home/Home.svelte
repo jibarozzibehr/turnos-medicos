@@ -143,6 +143,7 @@
     </div>
 
 </nav>
+
 <style>
     .titulo {
         text-align: center;
